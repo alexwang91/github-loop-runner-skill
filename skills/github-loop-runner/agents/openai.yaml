@@ -1,0 +1,15 @@
+interface:
+  display_name: "GitHub Loop Runner"
+  short_description: "Bootstrap and run GitHub-only autonomous agent repos."
+  default_prompt: "Use $github-loop-runner to turn this product idea into a GitHub repo with autonomous runner docs, progress tracking, and milestone PR loops."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "github"
+      description: "GitHub connector for repository files, branches, pull requests, CI status, and merges."
+      transport: "streamable_http"
+      url: "https://api.githubcopilot.com/mcp/"
+
+policy:
+  allow_implicit_invocation: true
