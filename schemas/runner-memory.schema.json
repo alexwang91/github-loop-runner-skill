@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Runner Memory Entry",
+  "type": "object",
+  "required": ["id", "type", "summary", "durable_lesson"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^MEM-[0-9]+$"},
+    "type": {"type": "string"},
+    "source_refs": {"type": "object"},
+    "summary": {"type": "string", "minLength": 1},
+    "durable_lesson": {"type": "string", "minLength": 1},
+    "applies_to": {"type": "array", "items": {"type": "string"}},
+    "read_before": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}
