@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/github-loop-runner/progress.schema.json",
+  "title": "Generated Repo Progress",
+  "type": "object",
+  "required": ["base_branch", "milestones"],
+  "properties": {
+    "base_branch": {"type": "string", "minLength": 1},
+    "milestones": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^M[0-9]+$"},
+          "description": {"type": "string", "minLength": 1},
+          "status": {"enum": ["TODO", "IN_PROGRESS", "DONE", "BLOCKED", "DEFERRED", "CANCELLED"]},
+          "category": {"type": "string"},
+          "acceptance": {"type": "array", "items": {"type": "string"}},
+          "verification": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
