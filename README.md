@@ -32,12 +32,13 @@ _A portable agent skill for bootstrapping and running GitHub-only autonomous dev
 
 </div>
 
-GitHub Loop Runner helps an agent turn a rough product idea into a GitHub repository that can keep working through milestone PRs using only the GitHub connector and CI. It seeds runner docs, a progress file, a detailed plan, development principles, a review-and-renewal loop, a stopper policy, a PR template, and a validation workflow.
+GitHub Loop Runner helps an agent turn a rough product idea into a GitHub repository that can keep working through milestone PRs using only the GitHub connector and CI. It seeds runner docs, a progress file, a detailed plan, development principles, a feedback taxonomy, a review-and-renewal loop, a stopper policy, a PR template, and a validation workflow.
 
 ## What It Does
 
-- **Bootstraps autonomous repos** - creates the files a GitHub-only runner needs: `AGENTS.md`, `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/review-and-renewal-loop.md`, `docs/stopper-policy.md`, and `docs/loop-review.md`.
-- **Runs milestone loops** - reads `docs/progress.md`, selects the first TODO, opens one PR, waits for CI, merges, updates progress, then re-reads progress.
+- **Bootstraps autonomous repos** - creates the files a GitHub-only runner needs: `AGENTS.md`, `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/feedback-taxonomy.md`, `docs/feedback-log.md`, `docs/review-and-renewal-loop.md`, `docs/stopper-policy.md`, and `docs/loop-review.md`.
+- **Runs milestone loops** - reads `docs/progress.md`, selects the first TODO, opens one PR, waits for CI, classifies feedback, merges, updates progress, then re-reads progress.
+- **Structures feedback** - classifies CI results, PR review, merge blockers, scope drift, regressions, and stopper decisions into typed feedback with allowed and forbidden next actions.
 - **Renews plans periodically** - runs a Review and Renewal Loop after configured intervals, when no TODO remains, or when work gets blocked, then adds only specific and verifiable new milestones.
 - **Uses CI as verification** - designed for environments with no local clone, no package manager, and no local test runner.
 - **Makes workflow sources explicit** - maps Matt Pocock skills, Superpowers, and Karpathy-style guidelines into repo docs and optional runtime invocations.
@@ -60,7 +61,10 @@ Apply workflow discipline:
 Matt alignment + Superpowers plan/TDD/review + Karpathy guardrails
         |
         v
-One milestone -> one branch -> one PR -> CI green -> merge
+One milestone -> one branch -> one PR -> CI feedback -> merge
+        |
+        v
+Classify feedback and update feedback log
         |
         v
 Update progress, then re-read progress
@@ -69,13 +73,17 @@ Update progress, then re-read progress
 Run Review and Renewal Loop when due
         |
         v
+Summarize feedback trends
+        |
+        v
 Renew the plan or stop through the stopper policy
 ```
 
-The skill has five layers:
+The skill has six layers:
 
-- `SKILL.md` gives the agent the bootstrap, loop, review, and prompt procedure.
+- `SKILL.md` gives the agent the bootstrap, loop, review, feedback, and prompt procedure.
 - `references/repo-scaffold.md` provides the generated repository file templates.
+- `references/feedback-taxonomy.md` defines structured feedback types, severity, evidence, and next actions.
 - `references/review-and-renewal-loop.md` defines the periodic plan review loop.
 - `references/stopper-policy.md` defines when the loop should stop.
 - `references/runner-prompt.md` provides the final copy-paste prompt for an autonomous GitHub-only runner.
@@ -108,7 +116,7 @@ Copy-Item -Recurse -Force ".\skills\github-loop-runner" "$env:USERPROFILE\.codex
 Invoke:
 
 ```text
-Use $github-loop-runner to turn this product idea into a GitHub repo with autonomous runner docs, progress tracking, review renewal, stopper policy, and milestone PR loops.
+Use $github-loop-runner to turn this product idea into a GitHub repo with autonomous runner docs, progress tracking, structured feedback, review renewal, stopper policy, and milestone PR loops.
 ```
 
 ### Portable Import For Other Agents
@@ -118,6 +126,7 @@ For Claude Code, Hermes, OpenClaw, Goose, Cursor, Aider, Gemini CLI, and similar
 ```text
 Use the GitHub Loop Runner skill at skills/github-loop-runner/SKILL.md.
 If bootstrapping a repo, also load skills/github-loop-runner/references/repo-scaffold.md.
+If enabling structured feedback, also load skills/github-loop-runner/references/feedback-taxonomy.md.
 If enabling plan renewal, also load skills/github-loop-runner/references/review-and-renewal-loop.md and skills/github-loop-runner/references/stopper-policy.md.
 If producing the final runner prompt, also load skills/github-loop-runner/references/runner-prompt.md.
 ```
@@ -141,7 +150,7 @@ This repo includes a local validator and GitHub Actions workflow.
 | Skill structure | `SKILL.md`, `agents/openai.yaml`, and references exist | `python scripts/validate_skill.py` |
 | Frontmatter | Skill name and trigger description are present | `python scripts/validate_skill.py` |
 | Workflow maps | Matt Pocock, Superpowers, Karpathy, and optional invocations are present | `python scripts/validate_skill.py` |
-| Runner prompt | GitHub-only, CI verification, progress loop, review renewal, stopper policy, and guardrails are present | `python scripts/validate_skill.py` |
+| Runner prompt | GitHub-only, CI verification, progress loop, feedback taxonomy, review renewal, stopper policy, and guardrails are present | `python scripts/validate_skill.py` |
 | Markdown fences | Code fences in Markdown files are balanced | `python scripts/validate_skill.py` |
 
 ## Compatibility
@@ -151,6 +160,7 @@ This repo includes a local validator and GitHub Actions workflow.
 | Codex local skills | Ready | Install under `~/.codex/skills/github-loop-runner` |
 | GitHub connector workflows | Ready | Skill assumes repository operations happen through GitHub connector APIs |
 | CI-only verification | Ready | Runner delegates verification to GitHub checks |
+| Feedback Taxonomy | Ready | Runner classifies observations before selecting next actions |
 | Review and Renewal Loop | Ready | Runner can review completed work and renew the plan before stopping |
 | Claude Code, Hermes, OpenClaw, Goose, Cursor, Aider | Portable | Import as skills, rules, memory, or project context |
 | Other agent skill systems | Portable | Adapt install path and invocation syntax |
@@ -162,6 +172,7 @@ This repo includes a local validator and GitHub Actions workflow.
 - want a new repo that teaches agents how to keep working after the first PR
 - need GitHub-only execution with no local clone or package-manager access
 - want `docs/progress.md` to be the milestone state source for autonomous loops
+- want CI, review, merge, and stopper outcomes to become structured feedback
 - want the loop to review completed work and add only specific, verifiable new work before stopping
 - want Matt/Superpowers/Karpathy discipline encoded directly into repo docs
 
@@ -176,18 +187,19 @@ This repo includes a local validator and GitHub Actions workflow.
 | Start here | Go deeper |
 |------------|-----------|
 | [Skill workflow](skills/github-loop-runner/SKILL.md) | [Repo scaffold templates](skills/github-loop-runner/references/repo-scaffold.md) |
-| [Runner prompt](skills/github-loop-runner/references/runner-prompt.md) | [Review loop](skills/github-loop-runner/references/review-and-renewal-loop.md) |
-| [Stopper policy](skills/github-loop-runner/references/stopper-policy.md) | [Loop review template](skills/github-loop-runner/references/loop-review-template.md) |
-| [Validation](scripts/validate_skill.py) | [CI workflow](.github/workflows/validate.yml) |
+| [Runner prompt](skills/github-loop-runner/references/runner-prompt.md) | [Feedback taxonomy](skills/github-loop-runner/references/feedback-taxonomy.md) |
+| [Review loop](skills/github-loop-runner/references/review-and-renewal-loop.md) | [Stopper policy](skills/github-loop-runner/references/stopper-policy.md) |
+| [Loop review template](skills/github-loop-runner/references/loop-review-template.md) | [CI workflow](.github/workflows/validate.yml) |
+| [Validation](scripts/validate_skill.py) | [Agent index](llms.txt) |
 
 ## Compared To
 
-| | Scope | GitHub-only | Progress loop | Plan renewal | Skill methodology |
-|-|-------|:-----------:|:-------------:|:------------:|:----------------:|
-| **GitHub Loop Runner Skill** | Repo bootstrap plus autonomous PR loop | Yes | Yes | Yes | Explicit |
-| Generic project prompt | One prompt | Sometimes | No | No | Usually implicit |
-| CI workflow template | Verification only | Yes | No | No | No |
-| Agent memory file | Instructions only | Maybe | Manual | Manual | Depends |
+| | Scope | GitHub-only | Progress loop | Feedback taxonomy | Plan renewal | Skill methodology |
+|-|-------|:-----------:|:-------------:|:-----------------:|:------------:|:----------------:|
+| **GitHub Loop Runner Skill** | Repo bootstrap plus autonomous PR loop | Yes | Yes | Yes | Yes | Explicit |
+| Generic project prompt | One prompt | Sometimes | No | No | No | Usually implicit |
+| CI workflow template | Verification only | Yes | No | Partial | No | No |
+| Agent memory file | Instructions only | Maybe | Manual | Manual | Manual | Depends |
 
 ## Contributing
 
