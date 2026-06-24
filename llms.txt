@@ -37,10 +37,6 @@ Important files:
 - `skills/github-loop-runner/references/harness-repair-loop.md`: harness repair protocol.
 - `skills/github-loop-runner/references/loop-hypotheses.md`: hypothesis log rules.
 - `skills/github-loop-runner/references/stopper-policy.md`: hard and soft stoppers.
-- `agent-prompts/README.md`: agent handoff prompt index.
-- `agent-prompts/harness-upgrade-plan.md`: upgrade plan for Loop Trace, harness repair, hypothesis-gated renewal, and harness-layer root cause classification.
 - `scripts/validate_skill.py`: validator.
 
 Integrity rule: the runner must re-read `docs/progress.md` after each completed milestone, use CI for verification in GitHub-only mode, update loop trace and feedback log when evidence changes, gate process changes through the hypothesis log, and run the harness repair protocol when repeated runner defects appear.
-
-Agent upgrade rule: when improving this skill, start from `agent-prompts/start-harness-upgrade.md`, then follow `agent-prompts/harness-upgrade-plan.md` in small validated milestones. The `agent-prompts/` directory is the handoff source for this repository.

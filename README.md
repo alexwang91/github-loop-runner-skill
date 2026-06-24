@@ -76,11 +76,6 @@ Use it when you need GitHub-only autonomous PR loops with CI verification, struc
 | [Review loop](skills/github-loop-runner/references/review-and-renewal-loop.md) | [Hypothesis log](skills/github-loop-runner/references/loop-hypotheses.md) |
 | [Stopper policy](skills/github-loop-runner/references/stopper-policy.md) | [Loop review template](skills/github-loop-runner/references/loop-review-template.md) |
 | [Validation](scripts/validate_skill.py) | [Agent index](llms.txt) |
-| [Agent prompts](agent-prompts/README.md) | [Harness upgrade plan](agent-prompts/harness-upgrade-plan.md) |
-
-## Agent Prompts
-
-Use `agent-prompts/start-harness-upgrade.md` to start another agent on harness-observability work. The prompt points to `agent-prompts/harness-upgrade-plan.md`, which covers Loop Trace, Harness Repair Loop, hypothesis-gated renewal, and harness-layer root cause classification.
 
 ## Compared To
 

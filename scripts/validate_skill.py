@@ -19,10 +19,6 @@ LOOP_TRACE_FILE = REFERENCES_DIR / "loop-trace.md"
 HARNESS_REPAIR_FILE = REFERENCES_DIR / "harness-repair-loop.md"
 LOOP_HYPOTHESES_FILE = REFERENCES_DIR / "loop-hypotheses.md"
 OPENAI_YAML = SKILL_DIR / "agents" / "openai.yaml"
-AGENT_PROMPTS_DIR = REPO_ROOT / "agent-prompts"
-AGENT_PROMPTS_README = AGENT_PROMPTS_DIR / "README.md"
-HARNESS_UPGRADE_PLAN = AGENT_PROMPTS_DIR / "harness-upgrade-plan.md"
-START_HARNESS_UPGRADE = AGENT_PROMPTS_DIR / "start-harness-upgrade.md"
 
 
 def fail(message: str) -> None:
@@ -88,9 +84,6 @@ def main() -> None:
     harness_repair = read(HARNESS_REPAIR_FILE)
     loop_hypotheses = read(LOOP_HYPOTHESES_FILE)
     openai_yaml = read(OPENAI_YAML)
-    agent_prompts_readme = read(AGENT_PROMPTS_README)
-    harness_upgrade_plan = read(HARNESS_UPGRADE_PLAN)
-    start_harness_upgrade = read(START_HARNESS_UPGRADE)
 
     fm = frontmatter(skill)
     require("name: github-loop-runner" in fm, "Skill frontmatter must name github-loop-runner")
@@ -267,34 +260,9 @@ def main() -> None:
         "hypothesis-gated renewal",
         "harness-layer root cause classification",
         "Review and Renewal Loop",
-        "Agent Prompts",
-    ])
-
-    require_phrases("Agent prompts README", agent_prompts_readme, [
-        "Agent Prompts",
-        "harness-upgrade-plan.md",
-        "start-harness-upgrade.md",
-    ])
-
-    require_phrases("Harness upgrade plan", harness_upgrade_plan, [
-        "Harness Upgrade Plan For Agent Workers",
-        "Loop Trace",
-        "Harness Repair Loop",
-        "Hypothesis-Gated Renewal",
-        "harness-layer root cause classification",
-        "python scripts/validate_skill.py",
-    ])
-
-    require_phrases("Start harness upgrade prompt", start_harness_upgrade, [
-        "superpowers:using-superpowers",
-        "agent-prompts/harness-upgrade-plan.md",
-        "python scripts/validate_skill.py",
-        "Preserve the GitHub-only operating model",
     ])
 
     require("github-loop-runner" in llms, "llms.txt must mention github-loop-runner")
-    require("agent-prompts/" in llms, "llms.txt must mention agent-prompts/")
-    require("agent-prompts/harness-upgrade-plan.md" in llms, "llms.txt must mention the harness upgrade plan")
     require("loop trace" in llms, "llms.txt must mention loop trace")
     require("feedback log" in llms, "llms.txt must mention feedback log")
     require("hypothesis log" in llms, "llms.txt must mention hypothesis log")
@@ -313,9 +281,6 @@ def main() -> None:
         (LOOP_TRACE_FILE, loop_trace),
         (HARNESS_REPAIR_FILE, harness_repair),
         (LOOP_HYPOTHESES_FILE, loop_hypotheses),
-        (AGENT_PROMPTS_README, agent_prompts_readme),
-        (HARNESS_UPGRADE_PLAN, harness_upgrade_plan),
-        (START_HARNESS_UPGRADE, start_harness_upgrade),
     ]:
         assert_balanced_fences(path, text)
 
