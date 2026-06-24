@@ -25,3 +25,9 @@ jobs:
           test -f docs/loop-hypotheses.md
           test -f docs/stopper-policy.md
           test -f docs/loop-review.md
+          test -f docs/agent-judge-loop.md
+          test -f docs/growth-candidates.md
+          test -f docs/runner-memory.md
+          test -f docs/codebase-localization.md
+          test -f docs/workflow-graph.md
+          test -f docs/loop-acceptance-tests.md
