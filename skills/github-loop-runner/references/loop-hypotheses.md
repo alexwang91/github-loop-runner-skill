@@ -1,100 +1,87 @@
 # Loop Hypotheses Reference
 
-Use this reference when the runner proposes a durable process rule, harness repair, verification-hardening milestone, or plan renewal based on feedback trends.
+Use this reference when the runner wants to change its operating process, review policy, verification strategy, or repair rule based on evidence rather than permanent speculation.
 
 ## Purpose
 
-Loop Hypotheses prevent untested process changes from becoming permanent memory. The runner should treat a new rule or harness repair as a falsifiable hypothesis with evidence, expected outcome, validation window, and rollback condition.
+Hypothesis-Gated Renewal prevents permanent process changes from being added without evidence. The review loop may propose a change, but the runner should track it as a hypothesis until trace, feedback, CI, or review evidence validates it.
 
 ## Generated Repo File
 
-When bootstrapping a target repository, generate:
+Bootstrap should generate `docs/loop-hypotheses.md`.
 
-- `docs/loop-hypotheses.md`: structured records for proposed, active, validated, invalidated, and rolled-back loop hypotheses.
+Recommended starting content:
+
+````markdown
+# Loop Hypotheses
+
+This file records temporary process hypotheses created by the Review and Renewal Loop or Harness Repair Loop.
+
+## Entries
+
+```yaml
+entries: []
+```
+````
 
 ## Hypothesis Entry Format
 
-Each hypothesis should use this structure:
+Use this structure:
 
 ```yaml
-hypothesis:
-  id: H-0001
-  date: "YYYY-MM-DD"
-  source_feedback_ids:
-    - F-0001
-  source_trace_ids:
-    - T-0001
-  hypothesis: "Short falsifiable statement."
-  change_applied: "Specific runner, scaffold, plan, or verification change."
-  expected_outcome: "Measurable improvement expected."
-  measurement_window: "Next 2 milestone PRs"
-  success_criteria:
-    - "No repeated scope_violation feedback in the measurement window."
-  rollback_condition:
-    - "If the same failure repeats twice, revert or revise the change."
-  status: proposed
-  result: ""
+- id: H-0001
+  status: active
+  created_at: "YYYY-MM-DDTHH:MM:SSZ"
+  source: review_loop
+  summary: "Short process hypothesis."
+  expected_effect: "What should improve if the hypothesis is true."
+  evidence_required:
+    trace_events: []
+    feedback_types: []
+    ci_checks: []
+    review_signals: []
+  validation_rule: "Specific condition that promotes this hypothesis."
+  invalidation_rule: "Specific condition that invalidates this hypothesis."
+  rollback_rule: "Safe rollback if invalidated."
+  linked_trace_ids: []
+  linked_feedback_ids: []
+  decision_history: []
 ```
 
-Allowed `status` values:
+Status values:
 
-- `proposed`
 - `active`
 - `validated`
 - `invalidated`
+- `promoted`
 - `rolled_back`
 
 ## When To Create A Hypothesis
 
-Create or update a hypothesis when the runner:
+Create a hypothesis when review or repair proposes:
 
-- adds a verification-hardening milestone,
-- changes runner protocol,
-- changes feedback taxonomy,
-- changes review cadence,
-- changes milestone slicing rules,
-- applies a Harness Repair Loop decision,
-- adds a durable rule based on repeated feedback,
-- renews the plan because a feedback trend suggests a process improvement.
+- a new milestone slicing rule,
+- a stronger PR evidence requirement,
+- a new trace event or metric,
+- a change to review cadence,
+- a CI scaffold change intended to improve runner reliability,
+- a change in feedback classification rules,
+- a process guardrail that should become permanent only after evidence.
 
-Do not create a hypothesis for obvious typo fixes, broken links, malformed Markdown, or one-off clerical corrections.
+Do not create hypotheses for ordinary product features, one-off fixes, or vague process preferences.
 
 ## Validation Rules
 
-Before a hypothesis can become `validated`, the runner must record:
-
-- the source feedback and trace evidence,
-- the change applied,
-- the measurement window,
-- the observed outcome,
-- why the outcome supports the hypothesis.
+A hypothesis may become `validated` only when the evidence requirement is met. Use trace entries, feedback log entries, CI results, PR review signals, or loop-review conclusions. State the exact evidence before changing status.
 
 ## Invalidation Rules
 
-Mark a hypothesis `invalidated` when:
-
-- the same failure repeats inside the measurement window,
-- the change increases scope violations, weak verification, trace gaps, or merge blockers,
-- the change cannot be measured,
-- the change conflicts with the stopper policy or state source rules.
+A hypothesis becomes `invalidated` when its invalidation rule fires, when evidence contradicts the expected effect, or when it creates repeated harness defects. Classify the result as `hypothesis_invalidated` in the feedback log.
 
 ## Promotion Rules
 
-Promote a validated hypothesis into durable runner guidance only when:
-
-- the measurement window completed,
-- evidence supports the expected outcome,
-- the change is specific and non-duplicative,
-- no stronger contradictory feedback exists.
+Promote a hypothesis into durable runner docs only after it is validated and the promotion has a specific target file, acceptance criteria, and CI/review evidence. Record the promotion in `docs/loop-trace.md`.
 
 ## Rollback Rules
 
-Roll back or revise a hypothesis when:
-
-- it is invalidated,
-- it creates new blocking feedback,
-- it weakens verification,
-- it makes progress state ambiguous,
-- it requires unavailable tools or credentials.
-
-Rollback should be recorded in `docs/loop-trace.md`, `docs/feedback-log.md`, and `docs/loop-hypotheses.md`.
+Every active hypothesis needs a rollback rule before it affects runner behavior. Roll back or mark blocked when the hypothesis is invalidated and the runner can safely restore the prior behavior. Stop when an invalidated active hypothesis has no safe rollback path.
