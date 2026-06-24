@@ -21,6 +21,12 @@ REQUIRED_FILES = [
     "docs/loop-hypotheses.md",
     "docs/stopper-policy.md",
     "docs/loop-review.md",
+    "docs/agent-judge-loop.md",
+    "docs/growth-candidates.md",
+    "docs/runner-memory.md",
+    "docs/codebase-localization.md",
+    "docs/workflow-graph.md",
+    "docs/loop-acceptance-tests.md",
     ".github/pull_request_template.md",
     ".github/workflows/verify.yml",
 ]
@@ -95,6 +101,12 @@ def validate_generated_repo(root: Path) -> None:
     handoff = read(root, "docs/handoff-decision.md")
     feedback_log = read(root, "docs/feedback-log.md")
     loop_trace = read(root, "docs/loop-trace.md")
+    judge = read(root, "docs/agent-judge-loop.md")
+    candidates = read(root, "docs/growth-candidates.md")
+    memory = read(root, "docs/runner-memory.md")
+    localization = read(root, "docs/codebase-localization.md")
+    workflow_graph = read(root, "docs/workflow-graph.md")
+    loop_acceptance = read(root, "docs/loop-acceptance-tests.md")
     pr_template = read(root, ".github/pull_request_template.md")
     workflow = read(root, ".github/workflows/verify.yml")
 
@@ -128,6 +140,13 @@ def validate_generated_repo(root: Path) -> None:
     for event in REQUIRED_TRACE_EVENTS:
         require(event in loop_trace, f"docs/loop-trace.md missing required event or metric: {event}")
 
+    require_phrases("docs/agent-judge-loop.md", judge, ["milestone_selection", "scope_control", "trace_completeness", "long_run_policy_compliance"])
+    require_phrases("docs/growth-candidates.md", candidates, ["product_impact", "verification_strength", "dependency_safety"])
+    require_phrases("docs/runner-memory.md", memory, ["compaction_interval_prs", "entries"])
+    require_phrases("docs/codebase-localization.md", localization, ["candidate files", "selected files", "scope risk"])
+    require_phrases("docs/workflow-graph.md", workflow_graph, ["project_loop", "milestone_loop", "repair_loop"])
+    require_phrases("docs/loop-acceptance-tests.md", loop_acceptance, ["required_files", "judge_loop_present", "memory_present", "localization_present"])
+
     require_phrases("pull request template", pr_template, [
         "CI is green",
         "loop trace updated",
@@ -136,7 +155,9 @@ def validate_generated_repo(root: Path) -> None:
         "handoff decision respected",
     ])
 
-    for relative_path in REQUIRED_FILES[:14]:
+    for relative_path in REQUIRED_FILES:
+        if relative_path.startswith(".github/"):
+            continue
         require(relative_path in workflow, f"verify workflow should check {relative_path}")
 
     print(f"Generated repo validation passed: {root}")
