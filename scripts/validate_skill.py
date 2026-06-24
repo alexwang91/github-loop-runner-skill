@@ -2,19 +2,22 @@ from pathlib import Path
 import re
 import sys
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 README_FILE = REPO_ROOT / "README.md"
 LLMS_FILE = REPO_ROOT / "llms.txt"
 
 SKILL_DIR = REPO_ROOT / "skills" / "github-loop-runner"
 SKILL_FILE = SKILL_DIR / "SKILL.md"
-SCAFFOLD_FILE = SKILL_DIR / "references" / "repo-scaffold.md"
-PROMPT_FILE = SKILL_DIR / "references" / "runner-prompt.md"
-FEEDBACK_FILE = SKILL_DIR / "references" / "feedback-taxonomy.md"
-REVIEW_FILE = SKILL_DIR / "references" / "review-and-renewal-loop.md"
-STOPPER_FILE = SKILL_DIR / "references" / "stopper-policy.md"
-LOOP_REVIEW_FILE = SKILL_DIR / "references" / "loop-review-template.md"
+REFERENCES_DIR = SKILL_DIR / "references"
+SCAFFOLD_FILE = REFERENCES_DIR / "repo-scaffold.md"
+PROMPT_FILE = REFERENCES_DIR / "runner-prompt.md"
+FEEDBACK_FILE = REFERENCES_DIR / "feedback-taxonomy.md"
+REVIEW_FILE = REFERENCES_DIR / "review-and-renewal-loop.md"
+STOPPER_FILE = REFERENCES_DIR / "stopper-policy.md"
+LOOP_REVIEW_FILE = REFERENCES_DIR / "loop-review-template.md"
+LOOP_TRACE_FILE = REFERENCES_DIR / "loop-trace.md"
+HARNESS_REPAIR_FILE = REFERENCES_DIR / "harness-repair-loop.md"
+LOOP_HYPOTHESES_FILE = REFERENCES_DIR / "loop-hypotheses.md"
 OPENAI_YAML = SKILL_DIR / "agents" / "openai.yaml"
 AGENT_PROMPTS_DIR = REPO_ROOT / "agent-prompts"
 AGENT_PROMPTS_README = AGENT_PROMPTS_DIR / "README.md"
@@ -81,6 +84,9 @@ def main() -> None:
     review = read(REVIEW_FILE)
     stopper = read(STOPPER_FILE)
     loop_review = read(LOOP_REVIEW_FILE)
+    loop_trace = read(LOOP_TRACE_FILE)
+    harness_repair = read(HARNESS_REPAIR_FILE)
+    loop_hypotheses = read(LOOP_HYPOTHESES_FILE)
     openai_yaml = read(OPENAI_YAML)
     agent_prompts_readme = read(AGENT_PROMPTS_README)
     harness_upgrade_plan = read(HARNESS_UPGRADE_PLAN)
@@ -89,12 +95,18 @@ def main() -> None:
     fm = frontmatter(skill)
     require("name: github-loop-runner" in fm, "Skill frontmatter must name github-loop-runner")
     require("GitHub-only" in fm and "autonomous" in fm, "Skill description must cover GitHub-only autonomous triggers")
-    require("references/repo-scaffold.md" in skill, "SKILL.md must reference repo-scaffold.md")
-    require("references/runner-prompt.md" in skill, "SKILL.md must reference runner-prompt.md")
-    require("references/feedback-taxonomy.md" in skill, "SKILL.md must reference feedback-taxonomy.md")
-    require("references/review-and-renewal-loop.md" in skill, "SKILL.md must reference review-and-renewal-loop.md")
-    require("references/stopper-policy.md" in skill, "SKILL.md must reference stopper-policy.md")
-    require("references/loop-review-template.md" in skill, "SKILL.md must reference loop-review-template.md")
+    for reference_name in [
+        "repo-scaffold.md",
+        "runner-prompt.md",
+        "feedback-taxonomy.md",
+        "review-and-renewal-loop.md",
+        "stopper-policy.md",
+        "loop-review-template.md",
+        "loop-trace.md",
+        "harness-repair-loop.md",
+        "loop-hypotheses.md",
+    ]:
+        require(f"references/{reference_name}" in skill, f"SKILL.md must reference {reference_name}")
     require("$github-loop-runner" in openai_yaml, "openai.yaml default prompt must invoke the skill")
     require("value: \"github\"" in openai_yaml, "openai.yaml must declare GitHub dependency")
 
@@ -103,6 +115,10 @@ def main() -> None:
         "Source Workflow Map",
         "Optional Skill Invocation Map",
         "Feedback Taxonomy",
+        "Loop Trace",
+        "Harness Repair Loop",
+        "Hypothesis-Gated Renewal",
+        "harness-layer root cause classification",
         "Review and Renewal Loop",
         "Stop Conditions",
         "$grill-with-docs",
@@ -125,7 +141,12 @@ def main() -> None:
         "Skill Pack Map",
         "Optional Runtime Invocations",
         "`docs/development-principles.md` Template",
+        "`docs/loop-trace.md` Template",
+        "`docs/loop-hypotheses.md` Template",
         "`.github/workflows/verify.yml` Template",
+        "loop trace updated",
+        "root-cause layer classified",
+        "active hypotheses updated",
     ])
 
     require_phrases("Runner prompt", prompt, [
@@ -133,7 +154,9 @@ def main() -> None:
         "Quietly probe GitHub connector capability",
         "docs/progress.md",
         "Feedback Taxonomy",
-        "Review and Renewal Loop",
+        "Loop Trace",
+        "Harness Repair Loop",
+        "Hypothesis-Gated Renewal",
         "stopper policy",
         "source workflow discipline",
         "Matt Pocock",
@@ -141,6 +164,7 @@ def main() -> None:
         "Karpathy",
         "Use CI as VERIFY",
         "Do not weaken tests",
+        "evidence is missing",
     ])
 
     require_phrases("Feedback reference", feedback, [
@@ -148,6 +172,12 @@ def main() -> None:
         "Feedback Sources",
         "Feedback Types",
         "Severity Levels",
+        "Root-Cause Layers",
+        "harness-layer root cause classification",
+        "trace_gap",
+        "harness_defect",
+        "hypothesis_invalidated",
+        "repair_validated",
         "Feedback Entry Format",
         "Allowed Action Map",
         "Runner Rules",
@@ -157,9 +187,11 @@ def main() -> None:
         "Review and Renewal Loop Reference",
         "Trigger Conditions",
         "Feedback Trends Since Last Review",
+        "Hypothesis-Gated Renewal",
         "Review Steps",
         "Allowed Plan Updates",
         "Forbidden Plan Updates",
+        "Harness Repair Loop",
     ])
 
     require_phrases("Stopper reference", stopper, [
@@ -168,13 +200,57 @@ def main() -> None:
         "Soft Stoppers",
         "Default Limits",
         "Stopper Report",
+        "missing trace evidence",
+        "repeated harness defects",
+        "invalidated active hypothesis",
+        "inconsistent progress state",
     ])
 
     require_phrases("Loop review template", loop_review, [
         "Feedback Trends Since Last Review",
+        "Trace Coverage",
+        "Harness Repair Assessment",
+        "Hypothesis Assessment",
         "Feedback Decision",
         "Stopper Assessment",
         "Decision",
+    ])
+
+    require_phrases("Loop trace reference", loop_trace, [
+        "Loop Trace Reference",
+        "Purpose",
+        "Generated Repo File",
+        "Trace Entry Format",
+        "Required Events",
+        "Metrics",
+        "Runner Rules",
+        "Review Usage",
+        "docs/loop-trace.md",
+    ])
+
+    require_phrases("Harness repair reference", harness_repair, [
+        "Harness Repair Loop Reference",
+        "Purpose",
+        "Trigger Conditions",
+        "Inputs",
+        "Repair Scope",
+        "Forbidden Repairs",
+        "Repair Steps",
+        "Validation Criteria",
+        "Output",
+    ])
+
+    require_phrases("Loop hypotheses reference", loop_hypotheses, [
+        "Loop Hypotheses Reference",
+        "Purpose",
+        "Generated Repo File",
+        "Hypothesis Entry Format",
+        "When To Create A Hypothesis",
+        "Validation Rules",
+        "Invalidation Rules",
+        "Promotion Rules",
+        "Rollback Rules",
+        "docs/loop-hypotheses.md",
     ])
 
     require_phrases("README", readme, [
@@ -186,6 +262,10 @@ def main() -> None:
         "Compatibility",
         "Compared To",
         "Feedback Taxonomy",
+        "Loop Trace",
+        "Harness Repair Loop",
+        "hypothesis-gated renewal",
+        "harness-layer root cause classification",
         "Review and Renewal Loop",
         "Agent Prompts",
     ])
@@ -213,7 +293,12 @@ def main() -> None:
     ])
 
     require("github-loop-runner" in llms, "llms.txt must mention github-loop-runner")
+    require("agent-prompts/" in llms, "llms.txt must mention agent-prompts/")
     require("agent-prompts/harness-upgrade-plan.md" in llms, "llms.txt must mention the harness upgrade plan")
+    require("loop trace" in llms, "llms.txt must mention loop trace")
+    require("feedback log" in llms, "llms.txt must mention feedback log")
+    require("hypothesis log" in llms, "llms.txt must mention hypothesis log")
+    require("harness repair protocol" in llms, "llms.txt must mention harness repair protocol")
 
     for path, text in [
         (README_FILE, readme),
@@ -225,6 +310,9 @@ def main() -> None:
         (REVIEW_FILE, review),
         (STOPPER_FILE, stopper),
         (LOOP_REVIEW_FILE, loop_review),
+        (LOOP_TRACE_FILE, loop_trace),
+        (HARNESS_REPAIR_FILE, harness_repair),
+        (LOOP_HYPOTHESES_FILE, loop_hypotheses),
         (AGENT_PROMPTS_README, agent_prompts_readme),
         (HARNESS_UPGRADE_PLAN, harness_upgrade_plan),
         (START_HARNESS_UPGRADE, start_harness_upgrade),
