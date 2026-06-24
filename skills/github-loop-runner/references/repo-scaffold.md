@@ -12,6 +12,12 @@ Use this reference when bootstrapping a repository from a product idea. Fill tem
 | `docs/next-steps-plan.md` | Detailed milestone plan and acceptance criteria. |
 | `docs/development-principles.md` | Engineering principles, Methodology Map, Skill Pack Map, and workflow discipline. |
 | `docs/long-run-growth-loop.md` | Long-run review cadence, backlog floor, expansion policy, and final review criteria. |
+| `docs/agent-judge-loop.md` | Process-level judge rules. |
+| `docs/growth-candidates.md` | Selected and rejected backlog expansion candidates. |
+| `docs/runner-memory.md` | Compact long-run memory. |
+| `docs/codebase-localization.md` | Pre-implementation localization records. |
+| `docs/workflow-graph.md` | Explicit project, milestone, and repair-loop graph. |
+| `docs/loop-acceptance-tests.md` | Harness acceptance checks. |
 | `docs/feedback-taxonomy.md` | Local feedback classification rules. |
 | `docs/feedback-log.md` | Append-only feedback record. |
 | `docs/loop-trace.md` | Observable runner event log. |
@@ -32,21 +38,22 @@ Use this reference when bootstrapping a repository from a product idea. Fill tem
 - Encode Matt Pocock alignment, Superpowers planning/TDD/review/finish, and Karpathy simplicity/surgical guardrails.
 - Include optional invocation names for runtimes that have those skills installed.
 - Bootstrap CI may be docs-only; the first product milestone must add real stack checks.
-- Generate feedback, trace, handoff, long-run growth, review, hypothesis, repair, and stopper files together.
+- Generate feedback, trace, handoff, long-run growth, judge, candidates, memory, localization, workflow graph, loop acceptance, review, hypothesis, repair, and stopper files together.
 - After bootstrap, stop at the Handoff Decision before product milestone implementation starts.
 - Long-Run Growth Mode should keep a backlog floor and run growth/deep reviews before final review eligibility.
+- The evaluation stack should check process quality, not only CI status.
 
 ## `AGENTS.md` Template
 
-Agents should read `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/long-run-growth-loop.md`, `docs/feedback-taxonomy.md`, `docs/loop-trace.md`, `docs/handoff-decision.md`, and `docs/loop-hypotheses.md` before development.
+Agents should read `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/long-run-growth-loop.md`, `docs/agent-judge-loop.md`, `docs/growth-candidates.md`, `docs/runner-memory.md`, `docs/codebase-localization.md`, `docs/workflow-graph.md`, `docs/loop-acceptance-tests.md`, `docs/feedback-taxonomy.md`, `docs/loop-trace.md`, `docs/handoff-decision.md`, and `docs/loop-hypotheses.md` before development.
 
 `docs/progress.md` is the state source. Select the first TODO milestone only after the Handoff Decision has selected current-agent development or after another agent receives the complete external-agent prompt.
 
-Before choosing work, apply `docs/long-run-growth-loop.md`: report merged PR count, TODO backlog count, growth review due, deep review due, and final review eligibility.
+Before choosing work, apply `docs/long-run-growth-loop.md`: report merged PR count, TODO backlog count, growth review due, deep review due, and final review eligibility. Read `docs/runner-memory.md`, then run codebase localization before implementation.
 
 ## Workflow Discipline
 
-Align, slice, plan, verify first, build surgically, review against evidence, and finish only after CI is green. Keep changes scoped to the current milestone and preserve acceptance evidence.
+Align, slice, plan, localize, verify first, build surgically, judge process quality, review against evidence, and finish only after CI is green. Keep changes scoped to the current milestone and preserve acceptance evidence.
 
 ## `docs/autonomous-runner.md` Template
 
@@ -56,6 +63,12 @@ Required sections:
 
 - Handoff Decision
 - Long-Run Growth Mode
+- Agent Judge Loop
+- Growth Candidate Selection
+- Runner Memory
+- Codebase Localization
+- Workflow Graph
+- Loop Acceptance Tests
 - Soft Check
 - Autonomous Loop
 - Guardrails
@@ -63,16 +76,19 @@ Required sections:
 
 Autonomous Loop summary:
 
-1. Fetch progress, feedback log, loop trace, handoff decision, long-run growth policy, loop hypotheses, and stopper policy.
+1. Fetch progress, feedback log, loop trace, handoff decision, long-run growth policy, judge loop, growth candidates, runner memory, localization records, workflow graph, loop acceptance tests, loop hypotheses, and stopper policy.
 2. Confirm that current-agent development or external-agent handoff has been selected.
 3. Apply Long-Run Growth Mode: check PR count, backlog floor, growth review, deep review, and final review eligibility.
-4. Decide whether review, harness repair, or hypothesis validation is due.
-5. Select the first TODO row. Skip DONE, BLOCKED, DEFERRED, and CANCELLED.
-6. Append trace events for selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, growth_review, deep_review, review_run, harness_repair_run, hypothesis_updated, handoff_decision, and stop.
-7. Plan and implement the smallest vertical slice.
-8. Use CI as VERIFY.
-9. Merge only after CI, progress, feedback, trace, and hypothesis evidence are complete.
-10. Re-fetch progress before choosing the next milestone.
+4. Read relevant memory.
+5. Decide whether review, judge, memory compaction, localization, harness repair, or hypothesis validation is due.
+6. Select the first TODO row. Skip DONE, BLOCKED, DEFERRED, and CANCELLED.
+7. Run codebase localization before implementation.
+8. Append trace events for selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, growth_review, deep_review, agent_judge, memory_compaction, codebase_localization, review_run, harness_repair_run, hypothesis_updated, handoff_decision, and stop.
+9. Plan and implement the smallest vertical slice.
+10. Use CI as VERIFY.
+11. Run the Agent Judge Loop before marking work complete.
+12. Merge only after CI, progress, feedback, trace, judge, and hypothesis evidence are complete.
+13. Re-fetch progress before choosing the next milestone.
 
 ## `docs/long-run-growth-loop.md` Template
 
@@ -94,6 +110,17 @@ long_run_growth:
 
 Before final review eligibility, an empty TODO list should trigger growth review and plan expansion unless a hard safety stopper applies.
 
+## Evaluation Stack Templates
+
+Generate these files with empty `entries: []` collections unless richer project-specific information is available:
+
+- `docs/agent-judge-loop.md`
+- `docs/growth-candidates.md`
+- `docs/runner-memory.md`
+- `docs/codebase-localization.md`
+- `docs/workflow-graph.md`
+- `docs/loop-acceptance-tests.md`
+
 ## `docs/handoff-decision.md` Template
 
 Recommended starting state:
@@ -104,7 +131,7 @@ handoff:
   chosen_mode: null
   decided_at: null
   decided_by: null
-  external_agent_prompt_generated: false
+  prompt_generated: false
   bootstrap_pr: null
   first_todo_milestone: null
 ```
@@ -143,8 +170,8 @@ Required sections:
 | Brainstorm | `$brainstorming` or `/brainstorming` | Explore options. |
 | Plan | `$writing-plans` or `/writing-plans` | Write concrete steps. |
 | Behavior changes | `$test-driven-development` or `/test-driven-development` | Define the failing check first. |
-| Review | `$requesting-code-review` or `/requesting-code-review` | Review diff and evidence. |
-| Finish | `$finishing-a-development-branch` or `/finishing-a-development-branch` | Merge after CI and state updates. |
+| Review | `$requesting-code-review` or `/requesting-code-review` | Review diff, judge report, and evidence. |
+| Finish | `$finishing-a-development-branch` or `/finishing-a-development-branch` | Merge after CI, judge, and state updates. |
 
 ## `docs/development-principles.md` Template
 
@@ -162,11 +189,11 @@ Use `$grill-with-docs`, `$to-issues`, `$brainstorming`, `$writing-plans`, `$test
 
 ## Workflow Discipline
 
-Align, slice, plan, verify first, build surgically, review, finish.
+Align, slice, plan, localize, verify first, judge, build surgically, review, finish.
 
 ## `docs/loop-trace.md` Template
 
-Trace metrics should include selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, growth_review, deep_review, review_run, harness_repair_run, hypothesis_updated, handoff_decision, and stop.
+Trace metrics should include selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, growth_review, deep_review, agent_judge, memory_compaction, codebase_localization, review_run, harness_repair_run, hypothesis_updated, handoff_decision, and stop.
 
 ## `docs/loop-hypotheses.md` Template
 
@@ -179,8 +206,14 @@ Required checklist items:
 - CI is green.
 - Acceptance criteria mapped to CI or review evidence.
 - `docs/progress.md` is updated to DONE or a progress PR is linked.
+- codebase localization recorded when applicable.
+- agent judge report completed when applicable.
 - loop trace updated.
 - feedback entries linked when applicable.
+- runner memory updated when durable lessons appear.
+- growth candidates recorded during deep review.
+- workflow graph node transition recorded when control flow changes.
+- loop acceptance checks remain represented.
 - root-cause layer classified for blocking feedback.
 - active hypotheses updated when applicable.
 - long-run growth policy checked when applicable.
@@ -199,6 +232,12 @@ The initial workflow must check that the generated runner docs exist, including:
 - `docs/next-steps-plan.md`
 - `docs/development-principles.md`
 - `docs/long-run-growth-loop.md`
+- `docs/agent-judge-loop.md`
+- `docs/growth-candidates.md`
+- `docs/runner-memory.md`
+- `docs/codebase-localization.md`
+- `docs/workflow-graph.md`
+- `docs/loop-acceptance-tests.md`
 - `docs/feedback-taxonomy.md`
 - `docs/feedback-log.md`
 - `docs/loop-trace.md`

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Code Area Map",
+  "type": "object",
+  "required": ["id", "milestone", "areas", "decision"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^L-[0-9]+$"},
+    "milestone": {"type": "string"},
+    "areas": {"type": "array", "items": {"type": "object"}},
+    "related_checks": {"type": "array", "items": {"type": "object"}},
+    "decision": {"type": "object"}
+  },
+  "additionalProperties": true
+}

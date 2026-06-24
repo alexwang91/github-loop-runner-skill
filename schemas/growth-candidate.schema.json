@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Growth Candidate",
+  "type": "object",
+  "required": ["id", "strategy", "milestones", "score", "selected"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^C-[0-9]+$"},
+    "review_id": {"type": ["string", "null"]},
+    "strategy": {"type": "string"},
+    "milestones": {"type": "array", "items": {"type": "object"}},
+    "score": {"type": "object"},
+    "selected": {"type": "boolean"},
+    "reason": {"type": "string"}
+  },
+  "additionalProperties": true
+}
