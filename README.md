@@ -32,17 +32,17 @@ _A portable agent skill for bootstrapping and running GitHub-only autonomous dev
 
 </div>
 
-GitHub Loop Runner helps an agent turn a rough product idea into a GitHub repository that can keep working through milestone PRs using only the GitHub connector and CI. It seeds runner docs, a progress file, a detailed plan, development principles, a feedback taxonomy, a review-and-renewal loop, a stopper policy, a PR template, and a validation workflow.
-
-This repo also includes temporary `agent-prompts/` handoff prompts for agents that should improve the skill itself. Those prompts tell the next agent to read the repository, validate the current skill, and then implement the harness-observability upgrade in small verified milestones. After the upgrade is fully encoded into the skill and reference files, `agent-prompts/` can be removed.
+GitHub Loop Runner helps an agent turn a rough product idea into a GitHub repository that can keep working through milestone PRs using only the GitHub connector and CI. It seeds runner docs, a progress file, a detailed plan, development principles, a feedback taxonomy, Loop Trace, a review-and-renewal loop, a Harness Repair Loop, hypothesis-gated renewal, a stopper policy, a PR template, and a validation workflow.
 
 ## What It Does
 
-- **Bootstraps autonomous repos** - creates the files a GitHub-only runner needs: `AGENTS.md`, `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/feedback-taxonomy.md`, `docs/feedback-log.md`, `docs/review-and-renewal-loop.md`, `docs/stopper-policy.md`, and `docs/loop-review.md`.
+- **Bootstraps autonomous repos** - creates the files a GitHub-only runner needs: `AGENTS.md`, `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/feedback-taxonomy.md`, `docs/feedback-log.md`, `docs/loop-trace.md`, `docs/review-and-renewal-loop.md`, `docs/harness-repair-loop.md`, `docs/loop-hypotheses.md`, `docs/stopper-policy.md`, and `docs/loop-review.md`.
 - **Runs milestone loops** - reads `docs/progress.md`, selects the first TODO, opens one PR, waits for CI, classifies feedback, merges, updates progress, then re-reads progress.
-- **Structures feedback** - classifies CI results, PR review, merge blockers, scope drift, regressions, and stopper decisions into typed feedback with allowed and forbidden next actions.
+- **Structures feedback** - classifies CI results, PR review, merge blockers, scope drift, regressions, trace gaps, harness defects, and stopper decisions into typed feedback with allowed and forbidden next actions plus harness root-cause layers.
+- **Records Loop Trace** - appends runner decisions, CI attempts, feedback IDs, merge attempts, progress updates, review decisions, harness repair decisions, and hypothesis updates as evidence.
 - **Renews plans periodically** - runs a Review and Renewal Loop after configured intervals, when no TODO remains, or when work gets blocked, then adds only specific and verifiable new milestones.
-- **Hands off skill upgrades** - includes agent-facing prompts and a harness upgrade plan for adding Loop Trace, Harness Repair Loop, hypothesis-gated renewal, and harness-layer root cause classification.
+- **Repairs harness failures** - runs a Harness Repair Loop when repeated evidence points to runner protocol, context, state, tool, verification, or governance defects.
+- **Gates process changes through hypotheses** - records durable process and repair changes in `docs/loop-hypotheses.md` with measurement windows and rollback conditions.
 - **Uses CI as verification** - designed for environments with no local clone, no package manager, and no local test runner.
 - **Makes workflow sources explicit** - maps Matt Pocock skills, Superpowers, and Karpathy-style guidelines into repo docs and optional runtime invocations.
 - **Avoids fake capabilities** - probes GitHub connector access quietly and asks only when repo access, app installation, or an initialized empty repo is missing.
@@ -70,10 +70,16 @@ One milestone -> one branch -> one PR -> CI feedback -> merge
 Classify feedback and update feedback log
         |
         v
+Append loop trace and evaluate hypotheses
+        |
+        v
 Update progress, then re-read progress
         |
         v
 Run Review and Renewal Loop when due
+        |
+        v
+Run Harness Repair Loop when repeated failures point to the harness
         |
         v
 Summarize feedback trends
@@ -82,12 +88,15 @@ Summarize feedback trends
 Renew the plan or stop through the stopper policy
 ```
 
-The skill has six layers:
+The skill has nine layers:
 
 - `SKILL.md` gives the agent the bootstrap, loop, review, feedback, and prompt procedure.
 - `references/repo-scaffold.md` provides the generated repository file templates.
 - `references/feedback-taxonomy.md` defines structured feedback types, severity, evidence, and next actions.
+- `references/loop-trace.md` defines append-only runner evidence.
 - `references/review-and-renewal-loop.md` defines the periodic plan review loop.
+- `references/harness-repair-loop.md` defines protocol repair rules.
+- `references/loop-hypotheses.md` defines hypothesis-gated renewal and rollback rules.
 - `references/stopper-policy.md` defines when the loop should stop.
 - `references/runner-prompt.md` provides the final copy-paste prompt for an autonomous GitHub-only runner.
 
@@ -191,16 +200,11 @@ This repo includes a local validator and GitHub Actions workflow.
 |------------|-----------|
 | [Skill workflow](skills/github-loop-runner/SKILL.md) | [Repo scaffold templates](skills/github-loop-runner/references/repo-scaffold.md) |
 | [Runner prompt](skills/github-loop-runner/references/runner-prompt.md) | [Feedback taxonomy](skills/github-loop-runner/references/feedback-taxonomy.md) |
-| [Review loop](skills/github-loop-runner/references/review-and-renewal-loop.md) | [Stopper policy](skills/github-loop-runner/references/stopper-policy.md) |
-| [Loop review template](skills/github-loop-runner/references/loop-review-template.md) | [CI workflow](.github/workflows/validate.yml) |
-| [Validation](scripts/validate_skill.py) | [Agent index](llms.txt) |
-| [Agent prompts](agent-prompts/README.md) | [Harness upgrade plan](agent-prompts/harness-upgrade-plan.md) |
-
-## Agent Prompts
-
-Use [agent-prompts/start-harness-upgrade.md](agent-prompts/start-harness-upgrade.md) to start another agent on the harness-observability upgrade.
-
-The prompt instructs the agent to read the repository first, run validation, then follow [agent-prompts/harness-upgrade-plan.md](agent-prompts/harness-upgrade-plan.md) milestone by milestone. The planned upgrade adds Loop Trace, Harness Repair Loop, hypothesis-gated renewal, harness-layer root cause classification, and stronger PR evidence. These prompts are development scaffolding, not final downstream runner behavior.
+| [Loop trace](skills/github-loop-runner/references/loop-trace.md) | [Review loop](skills/github-loop-runner/references/review-and-renewal-loop.md) |
+| [Harness repair loop](skills/github-loop-runner/references/harness-repair-loop.md) | [Loop hypotheses](skills/github-loop-runner/references/loop-hypotheses.md) |
+| [Stopper policy](skills/github-loop-runner/references/stopper-policy.md) | [Loop review template](skills/github-loop-runner/references/loop-review-template.md) |
+| [CI workflow](.github/workflows/validate.yml) | [Validation](scripts/validate_skill.py) |
+| [Agent index](llms.txt) | [License](LICENSE) |
 
 ## Compared To
 

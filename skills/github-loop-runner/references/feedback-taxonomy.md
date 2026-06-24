@@ -26,7 +26,10 @@ When bootstrapping a target repository, generate these files:
 - `pr_review`: human or agent review feedback.
 - `mergeability`: conflict, required check, required review, or permission status.
 - `progress_state`: `docs/progress.md` or equivalent state consistency.
+- `loop_trace`: missing, malformed, or contradictory `docs/loop-trace.md` evidence.
+- `loop_hypothesis`: validation, invalidation, promotion, or rollback of `docs/loop-hypotheses.md` entries.
 - `review_loop`: gaps, risks, or renewal decisions from the Review and Renewal Loop.
+- `harness_repair`: decisions from the Harness Repair Loop.
 - `stopper_policy`: stop or block decisions from `docs/stopper-policy.md`.
 
 ## Feedback Types
@@ -42,6 +45,10 @@ When bootstrapping a target repository, generate these files:
 | `merge_blocked` | blocking | Merge is blocked by conflict, checks, review, or permission. | Resolve the merge blocker. |
 | `blocked_dependency` | blocking | Work needs unavailable access, service setup, or human decision. | Mark blocked. |
 | `regression` | blocking | Previously completed work regressed. | Fix regression before new feature work. |
+| `trace_gap` | warning/blocking | Required loop evidence is missing, stale, malformed, or contradictory. | Restore trace evidence or classify the gap. |
+| `harness_defect` | blocking | Runner protocol, scaffold, CI harness, state handling, or tooling caused or amplified failure. | Run the Harness Repair Loop. |
+| `hypothesis_invalidated` | blocking | A process or repair hypothesis failed its measurement window or rollback condition. | Roll back or revise the hypothesis. |
+| `repair_validated` | info | A harness repair improved the measured outcome. | Promote or retain the repair. |
 | `success` | info | PR merged, CI green, and progress updated. | Continue loop. |
 | `no_meaningful_work` | terminal | Review found no useful verifiable work. | Stop with report. |
 
@@ -53,6 +60,25 @@ When bootstrapping a target repository, generate these files:
 - `terminal`: stop the runner and write a final review report.
 
 `weak_verification` is a warning for bootstrap or docs-only work. It is blocking when runtime behavior changed but no meaningful test, eval, build, or review check proves completion.
+
+## Harness Root Cause Layers
+
+Use `root_cause.layer` to classify where the failure primarily belongs:
+
+| Layer | Meaning |
+| --- | --- |
+| `observation` | The runner lacked or misread evidence, logs, diffs, or CI output. |
+| `context` | The runner read stale, missing, excessive, or misleading context. |
+| `planning` | The milestone, acceptance criteria, or implementation plan was poorly sliced. |
+| `control_loop` | The runner skipped loop steps, review triggers, retries, or stopper rules. |
+| `tool_action` | GitHub connector, branch, commit, PR, merge, or file operation failed or was misused. |
+| `state_store` | `docs/progress.md`, `docs/feedback-log.md`, `docs/loop-trace.md`, or related state/evidence files became inconsistent. |
+| `verification` | CI, tests, evals, or review checks were missing, weak, flaky, or misconfigured. |
+| `governance` | Permissions, trust boundaries, credentials, security, or human approval gates blocked safe progress. |
+| `product_code` | The product implementation itself caused the failure. |
+| `unknown` | Evidence is insufficient to classify the layer. |
+
+Repeated non-`product_code` layers should trigger review for a possible Harness Repair Loop.
 
 ## Feedback Entry Format
 
@@ -74,6 +100,7 @@ feedback:
     files: []
     review_comments: []
   root_cause:
+    layer: verification
     category: unknown
     confidence: low
     explanation: "What the evidence supports."
@@ -97,18 +124,24 @@ feedback:
 | `merge_blocked` | `resolve_conflict`, `wait_for_required_check`, `request_required_review`, `mark_blocked_if_permission_missing` | `bypass_required_check` |
 | `blocked_dependency` | `mark_blocked`, `create_mockable_followup`, `request_human_input` | `fake_integration` |
 | `regression` | `create_regression_fix_milestone`, `revert_regressing_change`, `add_regression_test` | `continue_new_feature_work` |
+| `trace_gap` | `restore_trace_evidence`, `append_corrective_trace_entry`, `run_review_if_evidence_missing`, `mark_blocked_if_trace_required` | `claim_complete_without_trace`, `mark_done` |
+| `harness_defect` | `run_harness_repair_loop`, `create_harness_repair_pr`, `link_repair_hypothesis` | `hide_repair_in_feature_pr`, `continue_feature_work_without_repair` |
+| `hypothesis_invalidated` | `roll_back_hypothesis`, `revise_hypothesis`, `run_harness_repair_loop`, `stop_if_no_safe_rollback` | `promote_hypothesis`, `ignore_failed_measurement` |
+| `repair_validated` | `promote_repair_guidance`, `record_validated_hypothesis`, `continue_loop` | `remove_successful_repair_without_reason` |
 | `success` | `mark_done`, `update_feedback_log`, `continue_loop`, `check_review_due` | none |
 | `no_meaningful_work` | `stop_with_loop_review` | `create_vague_cleanup`, `create_placeholder_milestone` |
 
 ## Runner Rules
 
 1. Classify feedback after each PR update, CI result, review result, merge attempt, review-loop decision, or stopper decision.
-2. Append the structured entry to `docs/feedback-log.md` when the repository has that file.
-3. Do not continue past `blocking` feedback unless the next action resolves that feedback or marks the milestone blocked with evidence.
-4. Do not continue past `terminal` feedback.
-5. Do not weaken tests, assertions, evals, or acceptance criteria to convert failure into success.
-6. During the Review and Renewal Loop, summarize feedback trends since the last review before adding new milestones.
-7. New milestones created from feedback must be specific, useful, non-duplicative, and verifiable.
+2. Include `root_cause.layer` before choosing next actions. Use `unknown` only when evidence is insufficient.
+3. Append the structured entry to `docs/feedback-log.md` when the repository has that file.
+4. Do not continue past `blocking` feedback unless the next action resolves that feedback or marks the milestone blocked with evidence.
+5. Do not continue past `terminal` feedback.
+6. Do not weaken tests, assertions, evals, or acceptance criteria to convert failure into success.
+7. During the Review and Renewal Loop, summarize feedback trends and harness root-cause layers since the last review before adding new milestones.
+8. Repeated non-`product_code` root-cause layers should trigger the Harness Repair Loop.
+9. New milestones created from feedback must be specific, useful, non-duplicative, and verifiable.
 
 ## Feedback Log Template
 

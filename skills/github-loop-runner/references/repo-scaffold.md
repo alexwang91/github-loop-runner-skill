@@ -11,6 +11,14 @@ Use this reference when bootstrapping a repository from a product idea. Fill tem
 | `docs/progress.md` | Single source of truth for milestone state. |
 | `docs/next-steps-plan.md` | Detailed milestone plan with acceptance criteria. |
 | `docs/development-principles.md` | Engineering principles, source skill map, and milestone workflow discipline. |
+| `docs/feedback-taxonomy.md` | Structured feedback rules and harness root-cause layers. |
+| `docs/feedback-log.md` | Append-only feedback entries. |
+| `docs/loop-trace.md` | Append-only evidence for runner events, decisions, attempts, and outcomes. |
+| `docs/review-and-renewal-loop.md` | Periodic review and plan renewal protocol. |
+| `docs/harness-repair-loop.md` | Protocol for repairing runner/harness failures without mixing product work. |
+| `docs/loop-hypotheses.md` | Falsifiable process, repair, and renewal hypotheses. |
+| `docs/stopper-policy.md` | Stop and block rules for unsafe or low-value continuation. |
+| `docs/loop-review.md` | Latest review, trace summary, hypothesis results, and stopper assessment. |
 | `.github/pull_request_template.md` | PR checklist that reinforces CI, progress, and no dummy files. |
 | `.github/workflows/verify.yml` | Initial CI verification. Replace or extend with real stack checks as soon as code exists. |
 
@@ -25,6 +33,8 @@ Optional: add `docs/decisions/` ADRs when the project has durable architecture d
 - Make the source skill systems visible: Matt Pocock skills shape alignment/shared language/vertical issues; Superpowers shapes brainstorm/plan/TDD/review/finish; Karpathy guidelines shape simplicity/surgical/goal-driven guardrails.
 - Include optional invocation names for runtimes that have those skills installed, but keep a fallback prose discipline so GitHub-only runners without those plugins still work.
 - Put the "Workflow Discipline" in `AGENTS.md`, `docs/autonomous-runner.md`, and `docs/development-principles.md`.
+- Generate loop evidence files so downstream runners can inspect completed work without relying on memory.
+- Treat `docs/loop-trace.md`, `docs/feedback-log.md`, and `docs/loop-hypotheses.md` as evidence stores; keep `docs/progress.md` as the only milestone state source.
 - Do not create `noop`, `dummy`, `x`, `y`, or temporary filler files.
 - For the bootstrap PR, a docs-only CI workflow is acceptable. For the first product milestone, add real checks for the project stack.
 
@@ -39,8 +49,14 @@ Before doing development work, read:
 2. `docs/progress.md`
 3. `docs/next-steps-plan.md`
 4. `docs/development-principles.md`
+5. `docs/feedback-taxonomy.md`
+6. `docs/loop-trace.md`
+7. `docs/review-and-renewal-loop.md`
+8. `docs/harness-repair-loop.md`
+9. `docs/loop-hypotheses.md`
+10. `docs/stopper-policy.md`
 
-`docs/progress.md` is the only state source. Pick the first `⬜ TODO` milestone, complete it through one PR into `<BASE_BRANCH>`, update that row to `✅ DONE`, then re-read progress before continuing.
+`docs/progress.md` is the only state source. `docs/loop-trace.md`, `docs/feedback-log.md`, and `docs/loop-hypotheses.md` are evidence stores. Pick the first `⬜ TODO` milestone, complete it through one PR into `<BASE_BRANCH>`, update that row to `✅ DONE`, then re-read progress before continuing.
 
 Use GitHub connector APIs when local clone or package-manager access is unavailable. In GitHub-only mode, verification is CI.
 
@@ -54,6 +70,7 @@ Before each milestone PR:
 4. Verify like Superpowers TDD: define the failing test, eval, or CI acceptance signal before changing behavior.
 5. Review and finish like Superpowers: inspect the PR against the plan, fix real issues, merge only after CI is green.
 6. Guard like Karpathy guidelines: think before coding, keep it simple, make surgical changes, and loop against explicit success criteria.
+7. Record like a harness engineer: append loop trace entries, classify feedback with root-cause layers, and gate durable process changes through hypotheses.
 
 Do not weaken tests, evals, assertions, or acceptance criteria to make CI green. Do not create dummy/noop files. Keep changes scoped to the current milestone.
 ```
@@ -66,6 +83,7 @@ Do not weaken tests, evals, assertions, or acceptance criteria to make CI green.
 > Persistent instruction for autonomous coding agents.
 > State source: `docs/progress.md`.
 > Milestone details: `docs/next-steps-plan.md`.
+> Evidence: `docs/loop-trace.md`, `docs/feedback-log.md`, `docs/loop-hypotheses.md`.
 
 ## Role
 
@@ -73,7 +91,7 @@ You are the autonomous engineering runner for `<OWNER>/<REPO>`.
 
 Goal: move every row in `docs/progress.md` to `✅ DONE`, one milestone PR at a time, merged into `<BASE_BRANCH>`.
 
-Use these principles: vertical slices, simple design, surgical changes, tests/evals as specifications, CI as verifier, human approval for trust boundaries.
+Use these principles: vertical slices, simple design, surgical changes, tests/evals as specifications, CI as verifier, traceable decisions, falsifiable process improvements, human approval for trust boundaries.
 
 ## Soft Check
 
@@ -96,9 +114,18 @@ If local verification is unavailable but GitHub connector and CI work, continue 
 7. Implement only this milestone.
 8. Open a PR into `<BASE_BRANCH>`.
 9. Use CI checks as VERIFY. Fix real failures. Do not weaken assertions or tests.
-10. After CI is green, ensure `docs/progress.md` marks the milestone `✅ DONE`.
-11. Merge the PR after CI is green.
-12. Return to step 1 and re-fetch progress before choosing the next milestone.
+10. Classify meaningful observations in `docs/feedback-log.md` with a harness root-cause layer.
+11. Append `docs/loop-trace.md` entries for milestone selection, branch, PR, CI, feedback, merge, progress update, review, repair, hypothesis, and stopper decisions.
+12. After CI is green, ensure `docs/progress.md` marks the milestone `✅ DONE`.
+13. Merge the PR after CI is green.
+14. Return to step 1 and re-fetch progress before choosing the next milestone.
+
+## Review, Repair, and Hypotheses
+
+- Run `docs/review-and-renewal-loop.md` when review is due.
+- Run `docs/harness-repair-loop.md` when repeated feedback points to runner protocol, context, state, tool, verification, or governance defects.
+- Record durable process changes in `docs/loop-hypotheses.md` with success criteria and rollback conditions.
+- Do not mix harness repair work with product feature work.
 
 ## Guardrails
 
@@ -108,10 +135,11 @@ If local verification is unavailable but GitHub connector and CI work, continue 
 - No direct production sends, destructive actions, or credential use without explicit approval.
 - Mock unstable external providers by default. Gate real integrations with opt-in environment flags.
 - Keep CI/evals meaningful. Red is a real signal.
+- Missing trace evidence, invalidated hypotheses, and unrepaired harness defects are real signals.
 
 ## Stop Conditions
 
-Stop and report when all remaining milestones are blocked, CI cannot verify, credentials are required, a trust boundary changes, or a merged milestone regresses.
+Stop and report when all remaining milestones are blocked, CI cannot verify, credentials are required, a trust boundary changes, required trace evidence is missing, an active hypothesis is invalidated with no rollback path, repeated harness defects cannot be safely repaired, or a merged milestone regresses.
 ```
 
 ## `docs/progress.md` Template
@@ -143,6 +171,56 @@ Stop and report when all remaining milestones are blocked, CI cannot verify, cre
 
 - Add blocked reasons and durable decisions here.
 ```
+
+## `docs/loop-trace.md` Template
+
+````markdown
+# Loop Trace
+
+This file records append-only evidence from autonomous runner events. It is evidence, not milestone state. Use `docs/progress.md` as the state source.
+
+## Entries
+
+```yaml
+entries: []
+```
+````
+
+## `docs/harness-repair-loop.md` Template
+
+````markdown
+# Harness Repair Loop
+
+Run this loop when repeated feedback or trace evidence points to runner protocol, context, state, tool, verification, or governance defects.
+
+## Trigger Conditions
+
+- Repeated `trace_gap`, `protocol_violation`, `scope_violation`, `weak_verification`, or process-caused `merge_blocked`.
+- Inconsistent `docs/progress.md` state.
+- Repeated harness root-cause layers in `docs/feedback-log.md`.
+- Invalidated process hypothesis.
+
+## Rules
+
+- Keep harness repair separate from product feature work.
+- Change only runner docs, feedback taxonomy, loop trace format, review rules, stopper policy, PR template, CI scaffold, or milestone slicing rules.
+- Link every repair to evidence and, when durable, to `docs/loop-hypotheses.md`.
+- Verify with CI and record the outcome in `docs/loop-trace.md`.
+````
+
+## `docs/loop-hypotheses.md` Template
+
+````markdown
+# Loop Hypotheses
+
+This file records falsifiable process, repair, and renewal hypotheses.
+
+## Entries
+
+```yaml
+entries: []
+```
+````
 
 ## `docs/next-steps-plan.md` Template
 
@@ -276,6 +354,10 @@ For every milestone:
 - [ ] CI is green.
 - [ ] Required tests/evals/checks are meaningful for this milestone.
 - [ ] `docs/progress.md` is updated to `✅ DONE` for this milestone, or a follow-up progress PR is linked.
+- [ ] `docs/loop-trace.md` records milestone selection, PR, CI/review evidence, feedback IDs when applicable, and progress update.
+- [ ] Blocking feedback includes a harness root-cause layer in `docs/feedback-log.md`.
+- [ ] Acceptance criteria map to CI, eval, or review evidence.
+- [ ] Active hypotheses in `docs/loop-hypotheses.md` are updated when this PR changes durable process guidance.
 
 ## Guardrails
 
@@ -283,6 +365,8 @@ For every milestone:
 - [ ] No unrelated refactors.
 - [ ] No dummy/noop/temp filler files.
 - [ ] Trust boundaries and external integrations remain gated or approved.
+- [ ] Harness repair work is separate from product feature work, unless this PR is explicitly a harness repair PR.
+- [ ] Repeated failures were checked against `docs/harness-repair-loop.md`.
 ```
 
 ## `.github/workflows/verify.yml` Template
@@ -308,6 +392,14 @@ jobs:
           test -f docs/progress.md
           test -f docs/next-steps-plan.md
           test -f docs/development-principles.md
+          test -f docs/feedback-taxonomy.md
+          test -f docs/feedback-log.md
+          test -f docs/loop-trace.md
+          test -f docs/review-and-renewal-loop.md
+          test -f docs/harness-repair-loop.md
+          test -f docs/loop-hypotheses.md
+          test -f docs/stopper-policy.md
+          test -f docs/loop-review.md
           ! find . -maxdepth 4 -type f \( -name noop -o -name dummy -o -name x -o -name y \) | grep .
 ```
 

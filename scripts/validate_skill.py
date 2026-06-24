@@ -15,11 +15,10 @@ FEEDBACK_FILE = SKILL_DIR / "references" / "feedback-taxonomy.md"
 REVIEW_FILE = SKILL_DIR / "references" / "review-and-renewal-loop.md"
 STOPPER_FILE = SKILL_DIR / "references" / "stopper-policy.md"
 LOOP_REVIEW_FILE = SKILL_DIR / "references" / "loop-review-template.md"
+LOOP_TRACE_FILE = SKILL_DIR / "references" / "loop-trace.md"
+HARNESS_REPAIR_FILE = SKILL_DIR / "references" / "harness-repair-loop.md"
+LOOP_HYPOTHESES_FILE = SKILL_DIR / "references" / "loop-hypotheses.md"
 OPENAI_YAML = SKILL_DIR / "agents" / "openai.yaml"
-AGENT_PROMPTS_DIR = REPO_ROOT / "agent-prompts"
-AGENT_PROMPTS_README = AGENT_PROMPTS_DIR / "README.md"
-HARNESS_UPGRADE_PLAN = AGENT_PROMPTS_DIR / "harness-upgrade-plan.md"
-START_HARNESS_UPGRADE = AGENT_PROMPTS_DIR / "start-harness-upgrade.md"
 
 
 def fail(message: str) -> None:
@@ -81,10 +80,10 @@ def main() -> None:
     review = read(REVIEW_FILE)
     stopper = read(STOPPER_FILE)
     loop_review = read(LOOP_REVIEW_FILE)
+    loop_trace = read(LOOP_TRACE_FILE)
+    harness_repair = read(HARNESS_REPAIR_FILE)
+    loop_hypotheses = read(LOOP_HYPOTHESES_FILE)
     openai_yaml = read(OPENAI_YAML)
-    agent_prompts_readme = read(AGENT_PROMPTS_README)
-    harness_upgrade_plan = read(HARNESS_UPGRADE_PLAN)
-    start_harness_upgrade = read(START_HARNESS_UPGRADE)
 
     fm = frontmatter(skill)
     require("name: github-loop-runner" in fm, "Skill frontmatter must name github-loop-runner")
@@ -95,6 +94,9 @@ def main() -> None:
     require("references/review-and-renewal-loop.md" in skill, "SKILL.md must reference review-and-renewal-loop.md")
     require("references/stopper-policy.md" in skill, "SKILL.md must reference stopper-policy.md")
     require("references/loop-review-template.md" in skill, "SKILL.md must reference loop-review-template.md")
+    require("references/loop-trace.md" in skill, "SKILL.md must reference loop-trace.md")
+    require("references/harness-repair-loop.md" in skill, "SKILL.md must reference harness-repair-loop.md")
+    require("references/loop-hypotheses.md" in skill, "SKILL.md must reference loop-hypotheses.md")
     require("$github-loop-runner" in openai_yaml, "openai.yaml default prompt must invoke the skill")
     require("value: \"github\"" in openai_yaml, "openai.yaml must declare GitHub dependency")
 
@@ -104,6 +106,9 @@ def main() -> None:
         "Optional Skill Invocation Map",
         "Feedback Taxonomy",
         "Review and Renewal Loop",
+        "Loop Trace",
+        "Harness Repair Loop",
+        "Hypothesis-Gated Renewal",
         "Stop Conditions",
         "$grill-with-docs",
         "$to-issues",
@@ -126,6 +131,9 @@ def main() -> None:
         "Optional Runtime Invocations",
         "`docs/development-principles.md` Template",
         "`.github/workflows/verify.yml` Template",
+        "`docs/loop-trace.md` Template",
+        "`docs/harness-repair-loop.md` Template",
+        "`docs/loop-hypotheses.md` Template",
     ])
 
     require_phrases("Runner prompt", prompt, [
@@ -134,6 +142,9 @@ def main() -> None:
         "docs/progress.md",
         "Feedback Taxonomy",
         "Review and Renewal Loop",
+        "docs/loop-trace.md",
+        "docs/harness-repair-loop.md",
+        "docs/loop-hypotheses.md",
         "stopper policy",
         "source workflow discipline",
         "Matt Pocock",
@@ -151,12 +162,18 @@ def main() -> None:
         "Feedback Entry Format",
         "Allowed Action Map",
         "Runner Rules",
+        "Harness Root Cause Layers",
+        "trace_gap",
+        "harness_defect",
     ])
 
     require_phrases("Review reference", review, [
         "Review and Renewal Loop Reference",
         "Trigger Conditions",
         "Feedback Trends Since Last Review",
+        "Loop Trace Summary",
+        "Hypothesis Results Since Last Review",
+        "Harness Repair Candidates",
         "Review Steps",
         "Allowed Plan Updates",
         "Forbidden Plan Updates",
@@ -168,13 +185,50 @@ def main() -> None:
         "Soft Stoppers",
         "Default Limits",
         "Stopper Report",
+        "missing trace evidence",
+        "invalidated active hypothesis",
     ])
 
     require_phrases("Loop review template", loop_review, [
         "Feedback Trends Since Last Review",
+        "Loop Trace Summary",
+        "Hypothesis Results Since Last Review",
+        "Harness Repair Candidates",
         "Feedback Decision",
         "Stopper Assessment",
         "Decision",
+    ])
+
+    require_phrases("Loop trace reference", loop_trace, [
+        "Loop Trace Reference",
+        "Generated Repo File",
+        "Trace Entry Format",
+        "Required Events",
+        "Metrics",
+        "Runner Rules",
+        "Review Usage",
+        "docs/loop-trace.md",
+    ])
+
+    require_phrases("Harness repair reference", harness_repair, [
+        "Harness Repair Loop Reference",
+        "Trigger Conditions",
+        "Repair Scope",
+        "Forbidden Repairs",
+        "Repair Steps",
+        "Validation Criteria",
+        "docs/harness-repair-loop.md",
+    ])
+
+    require_phrases("Loop hypotheses reference", loop_hypotheses, [
+        "Loop Hypotheses Reference",
+        "Generated Repo File",
+        "Hypothesis Entry Format",
+        "Validation Rules",
+        "Invalidation Rules",
+        "Promotion Rules",
+        "Rollback Rules",
+        "docs/loop-hypotheses.md",
     ])
 
     require_phrases("README", readme, [
@@ -187,33 +241,12 @@ def main() -> None:
         "Compared To",
         "Feedback Taxonomy",
         "Review and Renewal Loop",
-        "Agent Prompts",
-    ])
-
-    require_phrases("Agent prompts README", agent_prompts_readme, [
-        "Agent Prompts",
-        "harness-upgrade-plan.md",
-        "start-harness-upgrade.md",
-    ])
-
-    require_phrases("Harness upgrade plan", harness_upgrade_plan, [
-        "Harness Upgrade Plan For Agent Workers",
         "Loop Trace",
         "Harness Repair Loop",
-        "Hypothesis-Gated Renewal",
-        "harness-layer root cause classification",
-        "python scripts/validate_skill.py",
-    ])
-
-    require_phrases("Start harness upgrade prompt", start_harness_upgrade, [
-        "superpowers:using-superpowers",
-        "agent-prompts/harness-upgrade-plan.md",
-        "python scripts/validate_skill.py",
-        "Preserve the GitHub-only operating model",
+        "hypothesis-gated renewal",
     ])
 
     require("github-loop-runner" in llms, "llms.txt must mention github-loop-runner")
-    require("agent-prompts/harness-upgrade-plan.md" in llms, "llms.txt must mention the harness upgrade plan")
 
     for path, text in [
         (README_FILE, readme),
@@ -225,9 +258,9 @@ def main() -> None:
         (REVIEW_FILE, review),
         (STOPPER_FILE, stopper),
         (LOOP_REVIEW_FILE, loop_review),
-        (AGENT_PROMPTS_README, agent_prompts_readme),
-        (HARNESS_UPGRADE_PLAN, harness_upgrade_plan),
-        (START_HARNESS_UPGRADE, start_harness_upgrade),
+        (LOOP_TRACE_FILE, loop_trace),
+        (HARNESS_REPAIR_FILE, harness_repair),
+        (LOOP_HYPOTHESES_FILE, loop_hypotheses),
     ]:
         assert_balanced_fences(path, text)
 

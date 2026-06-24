@@ -4,7 +4,7 @@ Use this reference to prevent an autonomous loop from creating low-value work or
 
 ## Purpose
 
-The runner should continue only while there is specific, useful, non-duplicative, verifiable work. It should stop when continuing would require missing access, weak verification, major scope expansion, or human product judgment.
+The runner should continue only while there is specific, useful, non-duplicative, verifiable, and traceable work. It should stop when continuing would require missing access, weak verification, missing trace evidence, unrepaired harness defects, major scope expansion, or human product judgment.
 
 ## Hard Stoppers
 
@@ -17,6 +17,11 @@ When a hard stopper applies, stop and report the reason instead of adding more w
 - The same CI failure remains after the configured fix attempts and the root cause is outside the current milestone.
 - A merged milestone regresses and the runner cannot isolate a safe fix.
 - The next step would perform a high-impact operation that the current plan did not approve.
+- CI is missing and the runner also lacks sufficient trace or review evidence to verify the milestone.
+- Required loop trace evidence is missing and cannot be safely reconstructed.
+- Repeated harness defects cannot be repaired inside the current operating scope.
+- An invalidated active hypothesis has no safe rollback path.
+- `docs/progress.md` state is inconsistent and cannot be repaired safely through a PR.
 
 ## Soft Stoppers
 
@@ -28,6 +33,9 @@ When a soft stopper applies, run the Review and Renewal Loop once before stoppin
 - The configured maximum PR or milestone count has been reached.
 - The product goal appears satisfied.
 - Remaining work is duplicated, vague, or unverifiable.
+- Missing trace evidence prevents a confident review, but a one-time reconstruction attempt may be possible.
+- A process hypothesis is invalidated and needs one review cycle to decide rollback, repair, or stop.
+- Harness repair may be possible but requires a dedicated review before more feature work.
 
 ## Default Limits
 
@@ -41,6 +49,8 @@ stopper_policy:
   stop_when_no_meaningful_new_work: true
   max_fix_attempts_per_milestone: 3
   max_ci_reruns_per_failure: 1
+  max_trace_reconstruction_attempts: 1
+  max_harness_repair_attempts_per_pattern: 2
 ```
 
 Generated repositories may change these values in `docs/stopper-policy.md`, but they should keep explicit limits.
@@ -53,6 +63,9 @@ When the runner stops, write or update `docs/loop-review.md` with:
 - completed work summary
 - remaining blocked work
 - unresolved human decisions
+- missing trace evidence
+- invalidated hypotheses
+- unrepaired harness defects
 - safe next actions
 
 Stopping is a valid successful outcome when no safe, useful, verifiable work remains.
