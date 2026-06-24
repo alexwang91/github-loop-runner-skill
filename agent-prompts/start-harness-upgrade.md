@@ -7,6 +7,8 @@ Use `superpowers:using-superpowers` first. Then work in the repository `alexwang
 
 Your job is to upgrade the repository by following `agent-prompts/harness-upgrade-plan.md`.
 
+Important: `agent-prompts/` is temporary development scaffolding for improving this skill repository. Do not treat it as final downstream runner behavior. The final behavior must be encoded into `skills/github-loop-runner/SKILL.md` and the files under `skills/github-loop-runner/references/`.
+
 Before editing anything, read:
 
 - `README.md`
@@ -49,6 +51,7 @@ Target changes:
 4. Add hypothesis-gated renewal.
 5. Strengthen PR evidence and stopper policy.
 6. Update README, `llms.txt`, and validator coverage.
+7. After the final behavior is encoded into the skill/reference files, optionally remove `agent-prompts/` and its validator/index references as cleanup.
 
 Final response should include:
 

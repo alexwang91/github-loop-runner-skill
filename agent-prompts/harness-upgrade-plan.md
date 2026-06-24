@@ -11,6 +11,7 @@ This plan does not ask the agent to change the product promise. The runner must 
 - Keep GitHub-only runner behavior.
 - Keep CI as the verification channel.
 - Keep `docs/progress.md` as the milestone state source.
+- Treat `agent-prompts/` as temporary development scaffolding for this repository, not as final downstream runner behavior.
 - Do not add local clone, local package-manager, or local test requirements to generated runner protocols.
 - Do not weaken tests, assertions, evals, acceptance criteria, or guardrails.
 - Do not add vague "cleanup", "polish", or churn-only work.
@@ -293,6 +294,46 @@ Suggested commit:
 ```bash
 git add README.md llms.txt scripts/validate_skill.py
 git commit -m "docs: describe harness observability loop"
+```
+
+## Milestone 7: Remove Temporary Agent Prompts After The Upgrade Is Encoded
+
+Run this milestone only after Milestones 1-6 are complete and the final runner behavior is fully encoded in:
+
+- `skills/github-loop-runner/SKILL.md`
+- `skills/github-loop-runner/references/repo-scaffold.md`
+- `skills/github-loop-runner/references/runner-prompt.md`
+- `skills/github-loop-runner/references/feedback-taxonomy.md`
+- `skills/github-loop-runner/references/review-and-renewal-loop.md`
+- `skills/github-loop-runner/references/stopper-policy.md`
+- `skills/github-loop-runner/references/loop-review-template.md`
+
+Purpose: remove scaffolding that was only needed to upgrade this skill repository.
+
+Delete:
+
+- `agent-prompts/README.md`
+- `agent-prompts/harness-upgrade-plan.md`
+- `agent-prompts/start-harness-upgrade.md`
+
+Update:
+
+- `README.md` to remove the temporary Agent Prompts section, unless the maintainers still want public development prompts.
+- `llms.txt` to remove `agent-prompts/` references.
+- `scripts/validate_skill.py` to remove checks that require `agent-prompts/`.
+
+Verify:
+
+```bash
+python scripts/validate_skill.py
+```
+
+Suggested commit:
+
+```bash
+git add README.md llms.txt scripts/validate_skill.py
+git rm -r agent-prompts
+git commit -m "chore: remove temporary harness upgrade prompts"
 ```
 
 ## Final Verification

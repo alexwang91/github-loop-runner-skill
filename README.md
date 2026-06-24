@@ -34,7 +34,7 @@ _A portable agent skill for bootstrapping and running GitHub-only autonomous dev
 
 GitHub Loop Runner helps an agent turn a rough product idea into a GitHub repository that can keep working through milestone PRs using only the GitHub connector and CI. It seeds runner docs, a progress file, a detailed plan, development principles, a feedback taxonomy, a review-and-renewal loop, a stopper policy, a PR template, and a validation workflow.
 
-This repo also includes `agent-prompts/` handoff prompts for agents that should improve the skill itself. Those prompts tell the next agent to read the repository, validate the current skill, and then implement the harness-observability upgrade in small verified milestones.
+This repo also includes temporary `agent-prompts/` handoff prompts for agents that should improve the skill itself. Those prompts tell the next agent to read the repository, validate the current skill, and then implement the harness-observability upgrade in small verified milestones. After the upgrade is fully encoded into the skill and reference files, `agent-prompts/` can be removed.
 
 ## What It Does
 
@@ -200,7 +200,7 @@ This repo includes a local validator and GitHub Actions workflow.
 
 Use [agent-prompts/start-harness-upgrade.md](agent-prompts/start-harness-upgrade.md) to start another agent on the harness-observability upgrade.
 
-The prompt instructs the agent to read the repository first, run validation, then follow [agent-prompts/harness-upgrade-plan.md](agent-prompts/harness-upgrade-plan.md) milestone by milestone. The planned upgrade adds Loop Trace, Harness Repair Loop, hypothesis-gated renewal, harness-layer root cause classification, and stronger PR evidence.
+The prompt instructs the agent to read the repository first, run validation, then follow [agent-prompts/harness-upgrade-plan.md](agent-prompts/harness-upgrade-plan.md) milestone by milestone. The planned upgrade adds Loop Trace, Harness Repair Loop, hypothesis-gated renewal, harness-layer root cause classification, and stronger PR evidence. These prompts are development scaffolding, not final downstream runner behavior.
 
 ## Compared To
 

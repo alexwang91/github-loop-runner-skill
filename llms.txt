@@ -50,4 +50,4 @@ Important files:
 
 Integrity rule: the runner must re-read `docs/progress.md` after each completed milestone, use CI for verification in GitHub-only mode, and never weaken tests, evals, assertions, or acceptance criteria to get green.
 
-Agent upgrade rule: when improving this skill, start from `agent-prompts/start-harness-upgrade.md`, then follow `agent-prompts/harness-upgrade-plan.md` in small validated milestones.
+Agent upgrade rule: when improving this skill, start from `agent-prompts/start-harness-upgrade.md`, then follow `agent-prompts/harness-upgrade-plan.md` in small validated milestones. Treat `agent-prompts/` as temporary development scaffolding; after the upgrade is encoded in the skill and reference files, it may be removed with its validator/index references.
