@@ -23,6 +23,7 @@ SCHEMA_FILES = [
     "judge-report.schema.json",
     "growth-candidate.schema.json",
     "runner-memory.schema.json",
+    "code-area-map.schema.json",
 ]
 
 EXAMPLE_FILES = [
