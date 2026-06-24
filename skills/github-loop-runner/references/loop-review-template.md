@@ -18,6 +18,18 @@ Use this template for generated `docs/loop-review.md` files.
 
 - 
 
+## Feedback Trends Since Last Review
+
+| Feedback type | Count | Notes |
+| --- | ---: | --- |
+| `verification_failure` | 0 |  |
+| `weak_verification` | 0 |  |
+| `scope_violation` | 0 |  |
+| `merge_blocked` | 0 |  |
+| `regression` | 0 |  |
+| `blocked_dependency` | 0 |  |
+| `success` | 0 |  |
+
 ## Current State Assessment
 
 - Product goal alignment:
@@ -35,13 +47,20 @@ Use this template for generated `docs/loop-review.md` files.
 
 | Risk | Evidence | Decision |
 | --- | --- | --- |
-|  |  |
+|  |  |  |
 
 ## Plan Updates Applied
 
 | Update | Target file | Reason |
 | --- | --- | --- |
 |  |  |  |
+
+## Feedback Decision
+
+- Feedback type:
+- Severity:
+- Chosen next action:
+- Reason:
 
 ## Stopper Assessment
 
