@@ -1,6 +1,6 @@
 ---
 name: github-loop-runner
-description: Use when the user wants to bootstrap a GitHub repository with autonomous runner docs and tasks, stop for a handoff decision, produce a complete external-agent prompt, or continue a GitHub-only autonomous development loop with CI verification, docs/progress.md as state, Long-Run Growth Mode, Agent Judge Loop, Growth Candidate Selection, Runner Memory, Codebase Localization, Workflow Graph, Loop Acceptance Tests, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, harness-layer root cause classification, and milestone PRs through the GitHub connector instead of local clone or package-manager access.
+description: Use when the user wants to bootstrap a GitHub repository with autonomous runner docs and tasks, stop for a handoff decision, produce a complete external-agent prompt, or continue a GitHub-only autonomous development loop with CI verification, docs/progress.md as state, GitHub Operation Ledger, Long-Run Growth Mode, Agent Judge Loop, Growth Candidate Selection, Runner Memory, Codebase Localization, Workflow Graph, Loop Acceptance Tests, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, harness-layer root cause classification, and milestone PRs through the GitHub connector instead of local clone or package-manager access.
 ---
 
 # GitHub Loop Runner
@@ -9,13 +9,14 @@ description: Use when the user wants to bootstrap a GitHub repository with auton
 
 Turn a product idea or existing repository into a GitHub-only autonomous development handoff. The primary flow is: create or prepare the repository, write the plan and runner harness into it, open a bootstrap PR, then stop for a handoff decision. Product development starts only after the user chooses whether this same agent should continue or another agent should receive the complete runner prompt.
 
-When continuing development, the runner reads and writes through the GitHub connector, verifies through CI, uses `docs/progress.md` as the state source, records feedback and trace evidence, follows Long-Run Growth Mode for backlog expansion, evaluates process quality through Agent Judge Loop, uses Runner Memory for compact context, localizes code before implementation, repairs harness defects, gates process changes through hypotheses, then repeats.
+When continuing development, the runner reads and writes through the GitHub connector, verifies through CI, uses `docs/progress.md` as the state source, declares GitHub write-operation state through the GitHub Operation Ledger, records feedback and trace evidence, follows Long-Run Growth Mode for backlog expansion, evaluates process quality through Agent Judge Loop, uses Runner Memory for compact context, localizes code before implementation, repairs harness defects, gates process changes through hypotheses, then repeats.
 
 Load these references when bootstrapping or running:
 
 - `references/repo-scaffold.md`
 - `references/runner-prompt.md`
 - `references/handoff-decision.md`
+- `references/github-operation-ledger.md`
 - `references/long-run-growth-loop.md`
 - `references/agent-judge-loop.md`
 - `references/growth-candidate-selection.md`
@@ -64,7 +65,7 @@ Do not require local `git clone`, package managers, or local test commands for t
 1. Resolve the target repository, base branch, and product goal.
 2. Run the Capability Probe.
 3. Read all reference files listed above.
-4. Generate `AGENTS.md`, runner docs, progress, plan, development principles, long-run growth, agent judge, growth candidates, runner memory, codebase localization, workflow graph, loop acceptance tests, feedback taxonomy/log, Loop Trace, Handoff Decision, Review and Renewal Loop, Harness Repair Loop, loop hypotheses, stopper policy, loop review, PR template, and CI scaffold.
+4. Generate `AGENTS.md`, runner docs, progress, plan, development principles, GitHub operation ledger, long-run growth, agent judge, growth candidates, runner memory, codebase localization, workflow graph, loop acceptance tests, feedback taxonomy/log, Loop Trace, Handoff Decision, Review and Renewal Loop, Harness Repair Loop, loop hypotheses, stopper policy, loop review, PR template, and CI scaffold.
 5. Open one bootstrap PR through the GitHub connector.
 6. Let CI verify. Docs-only CI is acceptable only for bootstrap; the first product milestone must add stack-specific checks.
 7. Stop at the Handoff Decision. Report the repository, bootstrap branch/PR, generated files, CI status, and first TODO milestone from fresh `docs/progress.md`.
@@ -82,28 +83,29 @@ Ask:
 Do you want this agent to continue development, or should I hand this to another agent?
 ```
 
-Default to external-agent handoff when the user's original intent was to create a repository and tasks for another agent. External-agent handoff must output a full prompt, not a short instruction. The prompt must include repository, base branch, files to read, progress selection rule, CI-as-VERIFY rule, Long-Run Growth Mode, Agent Judge Loop, Growth Candidate Selection, Runner Memory, Codebase Localization, Workflow Graph, Loop Acceptance Tests, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, stopper rules, and hard guardrails.
+Default to external-agent handoff when the user's original intent was to create a repository and tasks for another agent. External-agent handoff must output a full prompt, not a short instruction. The prompt must include repository, base branch, files to read, progress selection rule, CI-as-VERIFY rule, GitHub Operation Ledger, Long-Run Growth Mode, Agent Judge Loop, Growth Candidate Selection, Runner Memory, Codebase Localization, Workflow Graph, Loop Acceptance Tests, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, stopper rules, and hard guardrails.
 
 ## Loop Workflow
 
 Only enter this workflow after the user explicitly chooses current-agent development or asks to continue development in an already bootstrapped repository.
 
-1. Fetch `docs/autonomous-runner.md`, `docs/progress.md`, `docs/long-run-growth-loop.md`, `docs/agent-judge-loop.md`, `docs/growth-candidates.md`, `docs/runner-memory.md`, `docs/codebase-localization.md`, `docs/workflow-graph.md`, `docs/loop-acceptance-tests.md`, `docs/feedback-taxonomy.md`, `docs/feedback-log.md`, `docs/loop-trace.md`, `docs/review-and-renewal-loop.md`, `docs/harness-repair-loop.md`, `docs/loop-hypotheses.md`, and `docs/stopper-policy.md`.
-2. Decide whether Long-Run Growth Review, judge review, memory compaction, codebase localization, review, repair, or hypothesis validation is due before selecting implementation work.
+1. Fetch `docs/autonomous-runner.md`, `docs/progress.md`, `docs/github-operation-ledger.md`, `docs/long-run-growth-loop.md`, `docs/agent-judge-loop.md`, `docs/growth-candidates.md`, `docs/runner-memory.md`, `docs/codebase-localization.md`, `docs/workflow-graph.md`, `docs/loop-acceptance-tests.md`, `docs/feedback-taxonomy.md`, `docs/feedback-log.md`, `docs/loop-trace.md`, `docs/review-and-renewal-loop.md`, `docs/harness-repair-loop.md`, `docs/loop-hypotheses.md`, and `docs/stopper-policy.md`.
+2. Decide whether Long-Run Growth Review, operation ledger update, judge review, memory compaction, codebase localization, review, repair, or hypothesis validation is due before selecting implementation work.
 3. Run Long-Run Growth Mode when PR intervals are reached, the TODO backlog is below floor, or no TODO remains before the configured minimum PR budget.
 4. During deep review, generate growth candidates, score them, select one batch, and append only the selected milestones.
 5. Read Runner Memory before milestone selection, growth review, codebase localization, harness repair, and final review.
-6. Run Codebase Localization before implementation PRs.
-7. Run Agent Judge Loop before marking work complete or when CI/review/trace evidence changes materially.
-8. Run the Review and Renewal Loop when no TODO remains after growth review, the review interval is reached, CI or feedback repeats, trace evidence is missing, a hypothesis needs a decision, or the user asks.
-9. Run the Harness Repair Loop when repeated `trace_gap`, `protocol_violation`, `weak_verification`, `harness_defect`, missing PR evidence, inconsistent state, or repeated low judge scores appear.
-10. Apply Stop Conditions. Before the long-run minimum PR budget is reached, no TODO remaining should trigger Long-Run Growth Review rather than final stopping unless a hard safety stopper applies.
-11. Re-fetch `docs/progress.md`, select the first `TODO`, and skip `DONE`, `BLOCKED`, `DEFERRED`, and `CANCELLED`.
-12. Append Loop Trace events for milestone selection, branch creation, PR open, CI observation, feedback classification, judge report, localization, memory compaction, growth review, review, repair, hypothesis lifecycle event, and stop.
-13. Create one branch and one PR for the milestone.
-14. Use CI as VERIFY. For every meaningful observation, classify feedback with root-cause layer, allowed next actions, and forbidden next actions.
-15. Merge only after CI is green, PR evidence is complete, judge gates pass, feedback blockers are resolved, active hypotheses are updated, and progress plus loop trace are current.
-16. Re-read `docs/progress.md` before the next milestone.
+6. Declare GitHub Operation Ledger state before any GitHub write action.
+7. Run Codebase Localization before implementation PRs.
+8. Run Agent Judge Loop before marking work complete or when CI/review/trace evidence changes materially.
+9. Run the Review and Renewal Loop when no TODO remains after growth review, the review interval is reached, CI or feedback repeats, trace evidence is missing, a hypothesis needs a decision, or the user asks.
+10. Run the Harness Repair Loop when repeated `trace_gap`, `protocol_violation`, `weak_verification`, `harness_defect`, missing PR evidence, inconsistent state, repeated low judge scores, or repeated branch/ref operations appear.
+11. Apply Stop Conditions. Before the long-run minimum PR budget is reached, no TODO remaining should trigger Long-Run Growth Review rather than final stopping unless a hard safety stopper applies.
+12. Re-fetch `docs/progress.md`, select the first `TODO`, and skip `DONE`, `BLOCKED`, `DEFERRED`, and `CANCELLED`.
+13. Append Loop Trace events for milestone selection, operation ledger update, branch creation, PR open, CI observation, feedback classification, judge report, localization, memory compaction, growth review, review, repair, hypothesis lifecycle event, and stop.
+14. Create one branch and one PR for the milestone. Branch creation is allowed at most once per milestone branch.
+15. Use CI as VERIFY. For every meaningful observation, classify feedback with root-cause layer, allowed next actions, and forbidden next actions.
+16. Merge only after CI is green, PR evidence is complete, judge gates pass, feedback blockers are resolved, active hypotheses are updated, GitHub operation ledger state is safe, and progress plus loop trace are current.
+17. Re-read `docs/progress.md` before the next milestone.
 
 ## Long-Run Growth Mode
 
@@ -111,19 +113,19 @@ Long-Run Growth Mode is defined in `references/long-run-growth-loop.md`. It sets
 
 ## Evaluation Stack
 
-Agent Judge Loop evaluates process quality. Growth Candidate Selection chooses among multiple plan expansion batches. Runner Memory compacts durable lessons. Codebase Localization narrows implementation scope before editing. Workflow Graph records control-flow nodes. Loop Acceptance Tests verify that the generated harness itself is present.
+GitHub Operation Ledger records write-operation state before mutations. Agent Judge Loop evaluates process quality. Growth Candidate Selection chooses among multiple plan expansion batches. Runner Memory compacts durable lessons. Codebase Localization narrows implementation scope before editing. Workflow Graph records control-flow nodes. Loop Acceptance Tests verify that the generated harness itself is present.
 
 ## Feedback Taxonomy
 
-Feedback Taxonomy controls the runner's next actions. Record source, type, severity, evidence, root cause, harness-layer root cause classification, allowed next actions, forbidden next actions, and runner decision. Classify CI, review, mergeability, progress state, trace gaps, judge findings, localization gaps, memory updates, harness defects, hypothesis outcomes, growth reviews, review-loop decisions, handoff decisions, and stopper decisions.
+Feedback Taxonomy controls the runner's next actions. Record source, type, severity, evidence, root cause, harness-layer root cause classification, allowed next actions, forbidden next actions, and runner decision. Classify CI, review, mergeability, progress state, trace gaps, operation ledger gaps, judge findings, localization gaps, memory updates, harness defects, hypothesis outcomes, growth reviews, review-loop decisions, handoff decisions, and stopper decisions.
 
 ## Loop Trace
 
-Loop Trace records observable runner events in `docs/loop-trace.md`. Required events include milestone selection, branch creation, PR open, CI observation, feedback classification, merge attempt, progress update, growth review, judge report, localization, memory compaction, review, harness repair, hypothesis lifecycle changes, handoff decisions, and stop. Missing material trace evidence becomes `trace_gap` feedback.
+Loop Trace records observable runner events in `docs/loop-trace.md`. Required events include milestone selection, operation ledger update, branch creation, PR open, CI observation, feedback classification, merge attempt, progress update, growth review, judge report, localization, memory compaction, review, harness repair, hypothesis lifecycle changes, handoff decisions, and stop. Missing material trace evidence becomes `trace_gap` feedback.
 
 ## Review and Renewal Loop
 
-Review completed milestones, feedback trends, trace coverage, product-goal fit, verification strength, judge trends, memory lessons, candidate quality, active hypotheses, backlog floor, blockers, and stopper status. Add only specific, useful, non-duplicative, verifiable milestones. Do not add vague cleanup, polish, placeholders, or churn-only work.
+Review completed milestones, feedback trends, trace coverage, product-goal fit, verification strength, operation ledger safety, judge trends, memory lessons, candidate quality, active hypotheses, backlog floor, blockers, and stopper status. Add only specific, useful, non-duplicative, verifiable milestones. Do not add vague cleanup, polish, placeholders, or churn-only work.
 
 ## Harness Repair Loop
 
@@ -141,6 +143,7 @@ Hypothesis-Gated Renewal prevents permanent process changes without evidence. Re
 - Keep code simple.
 - Make surgical changes.
 - Treat CI/evals as specifications.
+- Declare operation state before GitHub write actions.
 - Classify feedback before reacting.
 - Keep trace evidence current.
 - Maintain the backlog according to Long-Run Growth Mode.
@@ -158,6 +161,7 @@ Stop and report instead of forcing progress when:
 - No GitHub connector path can read/write the repository.
 - CI is missing or cannot verify work.
 - CI exists but required PR or trace evidence is missing and cannot be repaired safely.
+- GitHub Operation Ledger detects repeated branch/ref preparation, missing active branch, missing target files, or unsafe base-branch write risk.
 - Agent Judge Loop returns a blocking verdict that cannot be repaired safely.
 - The next step requires access or approval outside the current plan.
 - CI remains red after configured fix attempts and the root cause is outside scope.
@@ -173,8 +177,8 @@ When stopping after bootstrap or after a safe-to-continue review, run the Handof
 
 For bootstrap work, report repository, branch/PR, files seeded, CI status, first TODO milestone, and the Handoff Decision question. If the user chooses external-agent development, return the filled external-agent prompt.
 
-For loop work, report selected milestone, PR count, backlog count, localization summary, judge verdict, memory changes, candidate selection if any, feedback classifications and root-cause layers, growth/review/repair status, trace events, hypothesis changes, PR status, CI result, progress update, and next state after re-reading progress.
+For loop work, report selected milestone, operation ledger state, PR count, backlog count, localization summary, judge verdict, memory changes, candidate selection if any, feedback classifications and root-cause layers, growth/review/repair status, trace events, hypothesis changes, PR status, CI result, progress update, and next state after re-reading progress.
 
-For review-only work, report trigger, completed work, PR count, backlog count, feedback trends, trace coverage, judge trends, memory lessons, candidate quality, gaps, hypotheses, harness repairs, plan updates, stopper decision, and whether a Handoff Decision is needed.
+For review-only work, report trigger, completed work, PR count, backlog count, feedback trends, trace coverage, operation ledger safety, judge trends, memory lessons, candidate quality, gaps, hypotheses, harness repairs, plan updates, stopper decision, and whether a Handoff Decision is needed.
 
 For prompt-only work, read `references/runner-prompt.md`, fill placeholders, and return the prompt directly.
