@@ -56,7 +56,7 @@ Protocol:
 19. Ensure `docs/progress.md` marks that milestone `✅ DONE` on `<BASE_BRANCH>`. If it was not included in the milestone PR, open and merge an immediate progress PR after CI.
 20. Return to step 2 and re-read `docs/progress.md` before selecting the next milestone.
 
-Feedback rules:
+Feedback Taxonomy rules:
 
 - Every meaningful observation becomes a feedback entry with source, type, severity, milestone, evidence, root cause, allowed next actions, forbidden next actions, and runner decision.
 - Blocking feedback must be resolved before the runner advances.
@@ -85,5 +85,5 @@ Use $github-loop-runner to bootstrap `<OWNER>/<REPO>` from this product idea:
 
 `<PRODUCT_IDEA>`
 
-Create the autonomous runner docs, progress table, detailed next-steps plan, development principles, feedback taxonomy, feedback log, review-and-renewal loop, stopper policy, PR template, and CI scaffold. Use the GitHub connector only. If the connector cannot create a new repository, tell me exactly what empty repo or GitHub App installation you need, then continue once I provide it.
+Create the autonomous runner docs, progress table, detailed next-steps plan, development principles, Feedback Taxonomy, feedback log, review-and-renewal loop, stopper policy, PR template, and CI scaffold. Use the GitHub connector only. If the connector cannot create a new repository, tell me exactly what empty repo or GitHub App installation you need, then continue once I provide it.
 ```
