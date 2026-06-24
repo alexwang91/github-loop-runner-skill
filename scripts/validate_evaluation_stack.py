@@ -11,6 +11,7 @@ SCHEMAS = REPO_ROOT / "schemas"
 EXAMPLE = REPO_ROOT / "examples" / "minimal-product-handoff" / "generated"
 
 REFERENCE_FILES = {
+    "github-operation-ledger.md": ["GitHub Operation Ledger Reference", "Ledger Rule", "State Machine", "Mutation Loop Stopper"],
     "agent-judge-loop.md": ["Agent Judge Loop Reference", "Judge Dimensions", "Judge Report Format", "Verdicts"],
     "growth-candidate-selection.md": ["Growth Candidate Selection Reference", "Candidate Generation", "Candidate Batch Format", "Scoring Rules"],
     "runner-memory.md": ["Runner Memory Reference", "Memory Cycle", "Memory Entry Format", "Memory Types"],
@@ -20,6 +21,7 @@ REFERENCE_FILES = {
 }
 
 SCHEMA_FILES = [
+    "github-operation-ledger.schema.json",
     "judge-report.schema.json",
     "growth-candidate.schema.json",
     "runner-memory.schema.json",
@@ -27,6 +29,7 @@ SCHEMA_FILES = [
 ]
 
 EXAMPLE_FILES = [
+    "docs/github-operation-ledger.md",
     "docs/agent-judge-loop.md",
     "docs/growth-candidates.md",
     "docs/runner-memory.md",
@@ -73,6 +76,8 @@ def validate_example_files() -> None:
 
     workflow = read(EXAMPLE / ".github" / "workflows" / "verify.yml")
     for filename in EXAMPLE_FILES:
+        if filename == "docs/github-operation-ledger.md":
+            continue
         require(filename in workflow, f"Example workflow does not check {filename}")
 
 
