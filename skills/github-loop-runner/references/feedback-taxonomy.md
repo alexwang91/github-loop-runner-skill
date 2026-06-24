@@ -114,7 +114,7 @@ feedback:
 
 Generated `docs/feedback-log.md` should start with:
 
-```markdown
+````markdown
 # Feedback Log
 
 This file records structured observations from the autonomous runner.
@@ -124,4 +124,4 @@ This file records structured observations from the autonomous runner.
 ```yaml
 entries: []
 ```
-```
+````
