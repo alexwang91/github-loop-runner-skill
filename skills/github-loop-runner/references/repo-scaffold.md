@@ -14,6 +14,7 @@ Use this reference when bootstrapping a repository from a product idea. Fill tem
 | `docs/feedback-taxonomy.md` | Local feedback classification rules. |
 | `docs/feedback-log.md` | Append-only feedback record. |
 | `docs/loop-trace.md` | Observable runner event log. |
+| `docs/handoff-decision.md` | Records the choice between current-agent development and external-agent handoff. |
 | `docs/review-and-renewal-loop.md` | Review protocol. |
 | `docs/harness-repair-loop.md` | Harness repair protocol. |
 | `docs/loop-hypotheses.md` | Hypothesis log for evidence-gated process changes. |
@@ -29,75 +30,73 @@ Use this reference when bootstrapping a repository from a product idea. Fill tem
 - Write vertical-slice milestones with observable acceptance criteria.
 - Encode Matt Pocock alignment, Superpowers planning/TDD/review/finish, and Karpathy simplicity/surgical guardrails.
 - Include optional invocation names for runtimes that have those skills installed.
-- Do not create `noop`, `dummy`, `x`, `y`, or temporary filler files.
 - Bootstrap CI may be docs-only; the first product milestone must add real stack checks.
-- Generate feedback, trace, review, hypothesis, repair, and stopper files together.
+- Generate feedback, trace, handoff, review, hypothesis, repair, and stopper files together.
+- After bootstrap, stop at the Handoff Decision before product milestone implementation starts.
 
 ## `AGENTS.md` Template
 
-```markdown
-# Agent Instructions
+Agents should read `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/feedback-taxonomy.md`, `docs/loop-trace.md`, `docs/handoff-decision.md`, and `docs/loop-hypotheses.md` before development.
 
-Read `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/feedback-taxonomy.md`, `docs/loop-trace.md`, and `docs/loop-hypotheses.md` before development.
-
-`docs/progress.md` is the state source. Pick the first TODO milestone, complete it through one PR into `<BASE_BRANCH>`, update that row to DONE, append trace and feedback evidence, then re-read progress.
+`docs/progress.md` is the state source. Select the first TODO milestone only after the Handoff Decision has selected current-agent development or after another agent receives the complete external-agent prompt.
 
 ## Workflow Discipline
 
-Align, slice, plan, verify first, build surgically, review against evidence, and finish only after CI is green. Do not weaken tests, evals, assertions, or acceptance criteria.
-```
+Align, slice, plan, verify first, build surgically, review against evidence, and finish only after CI is green. Keep changes scoped to the current milestone and preserve acceptance evidence.
 
 ## `docs/autonomous-runner.md` Template
 
-```markdown
-# Autonomous Runner Protocol
+Goal: move each `docs/progress.md` row to DONE through one CI-verified PR into `<BASE_BRANCH>` after the Handoff Decision has selected the development mode.
 
-Goal: move each `docs/progress.md` row to DONE through one CI-verified PR into `<BASE_BRANCH>`.
+Required sections:
 
-## Soft Check
+- Handoff Decision
+- Soft Check
+- Autonomous Loop
+- Guardrails
+- Stop Conditions
 
-Quietly probe GitHub connector, CI, and optional local access. In GitHub-only mode, verification is CI.
+Autonomous Loop summary:
 
-## Autonomous Loop
+1. Fetch progress, feedback log, loop trace, handoff decision, loop hypotheses, and stopper policy.
+2. Confirm that current-agent development or external-agent handoff has been selected.
+3. Decide whether review, harness repair, or hypothesis validation is due.
+4. Select the first TODO row. Skip DONE, BLOCKED, DEFERRED, and CANCELLED.
+5. Append trace events for selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, review_run, harness_repair_run, hypothesis_updated, handoff_decision, and stop.
+6. Plan and implement the smallest vertical slice.
+7. Use CI as VERIFY.
+8. Merge only after CI, progress, feedback, trace, and hypothesis evidence are complete.
+9. Re-fetch progress before choosing the next milestone.
 
-1. Fetch progress, feedback log, loop trace, loop hypotheses, and stopper policy.
-2. Decide whether review, harness repair, or hypothesis validation is due.
-3. Select the first TODO row. Skip DONE, BLOCKED, DEFERRED, and CANCELLED.
-4. Append trace events for selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, review_run, harness_repair_run, hypothesis_updated, and stop.
-5. Plan and implement the smallest vertical slice.
-6. Use CI as VERIFY. Do not weaken tests or assertions.
-7. Merge only after CI, progress, feedback, trace, and hypothesis evidence are complete.
-8. Re-fetch progress before choosing the next milestone.
+## `docs/handoff-decision.md` Template
+
+Recommended starting state:
+
+```yaml
+handoff:
+  status: pending
+  chosen_mode: null
+  decided_at: null
+  decided_by: null
+  external_agent_prompt_generated: false
+  bootstrap_pr: null
+  first_todo_milestone: null
 ```
+
+Allowed modes:
+
+- `current_agent_development`: the current agent may enter the loop workflow.
+- `external_agent_development`: the current agent outputs a complete prompt for another agent and stops product development in this session.
 
 ## `docs/progress.md` Template
 
-```markdown
-# Autonomous Progress
+Required sections:
 
-> Base branch: `<BASE_BRANCH>`.
-
-## Status Legend
-
-- TODO
-- IN_PROGRESS
-- DONE
-- BLOCKED
-- DEFERRED
-- CANCELLED
-
-## Progress
-
-| Milestone | Description | Status |
-| :--- | :--- | :--- |
-| M0 | `<FIRST_VERTICAL_SLICE>` | TODO |
-| M1 | `<SECOND_VERTICAL_SLICE>` | TODO |
-```
+- base branch
+- status legend with TODO, IN_PROGRESS, DONE, BLOCKED, DEFERRED, CANCELLED
+- progress table with milestone id, description, and status
 
 ## `docs/next-steps-plan.md` Template
-
-```markdown
-# Next Steps Plan
 
 ## Product Goal
 
@@ -120,12 +119,8 @@ Quietly probe GitHub connector, CI, and optional local access. In GitHub-only mo
 | Behavior changes | `$test-driven-development` or `/test-driven-development` | Define the failing check first. |
 | Review | `$requesting-code-review` or `/requesting-code-review` | Review diff and evidence. |
 | Finish | `$finishing-a-development-branch` or `/finishing-a-development-branch` | Merge after CI and state updates. |
-```
 
 ## `docs/development-principles.md` Template
-
-```markdown
-# Development Principles
 
 ## Skill Pack Map
 
@@ -142,113 +137,47 @@ Use `$grill-with-docs`, `$to-issues`, `$brainstorming`, `$writing-plans`, `$test
 ## Workflow Discipline
 
 Align, slice, plan, verify first, build surgically, review, finish.
-```
 
 ## `docs/loop-trace.md` Template
 
-````markdown
-# Loop Trace
-
-## Metrics
-
-| Metric | Value | Notes |
-| --- | ---: | --- |
-| selected_milestone | 0 |  |
-| branch_created | 0 |  |
-| pr_opened | 0 |  |
-| ci_observed | 0 |  |
-| feedback_classified | 0 |  |
-| merge_attempted | 0 |  |
-| progress_updated | 0 |  |
-| review_run | 0 |  |
-| harness_repair_run | 0 |  |
-| hypothesis_updated | 0 |  |
-| stop | 0 |  |
-
-## Events
-
-```yaml
-entries: []
-```
-````
+Trace metrics should include selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, review_run, harness_repair_run, hypothesis_updated, handoff_decision, and stop.
 
 ## `docs/loop-hypotheses.md` Template
 
-````markdown
-# Loop Hypotheses
-
-```yaml
-entries: []
-```
-````
+Start with an empty hypothesis log. Each hypothesis needs validation, invalidation, promotion, and rollback rules.
 
 ## `.github/pull_request_template.md` Template
 
-```markdown
-## Milestone
+Required checklist items:
 
-- Progress row:
-- Base branch:
-
-## What changed
-
--
-
-## Acceptance evidence
-
-| Acceptance criterion | CI/review evidence |
-| --- | --- |
-|  |  |
-
-## Verification
-
-- [ ] CI is green.
-- [ ] Acceptance criteria mapped to CI or review evidence.
-- [ ] `docs/progress.md` is updated to DONE or a progress PR is linked.
-
-## Loop evidence
-
-- [ ] loop trace updated.
-- [ ] feedback entries linked when applicable.
-- [ ] root-cause layer classified for blocking feedback.
-- [ ] active hypotheses updated when applicable.
-- [ ] harness repair considered when failures repeat.
-
-## Guardrails
-
-- [ ] No weakened tests, evals, assertions, or acceptance criteria.
-- [ ] No unrelated refactors.
-- [ ] No dummy/noop/temp filler files.
-```
+- CI is green.
+- Acceptance criteria mapped to CI or review evidence.
+- `docs/progress.md` is updated to DONE or a progress PR is linked.
+- loop trace updated.
+- feedback entries linked when applicable.
+- root-cause layer classified for blocking feedback.
+- active hypotheses updated when applicable.
+- handoff decision respected when applicable.
+- harness repair considered when failures repeat.
+- no unrelated refactors.
+- no dummy/noop/temp filler files.
 
 ## `.github/workflows/verify.yml` Template
 
-```yaml
-name: verify
-on:
-  pull_request:
-  push:
-    branches: ["<BASE_BRANCH>"]
-jobs:
-  docs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Verify runner docs
-        run: |
-          test -f AGENTS.md
-          test -f docs/autonomous-runner.md
-          test -f docs/progress.md
-          test -f docs/next-steps-plan.md
-          test -f docs/development-principles.md
-          test -f docs/feedback-taxonomy.md
-          test -f docs/feedback-log.md
-          test -f docs/loop-trace.md
-          test -f docs/review-and-renewal-loop.md
-          test -f docs/harness-repair-loop.md
-          test -f docs/loop-hypotheses.md
-          test -f docs/stopper-policy.md
-          ! find . -maxdepth 4 -type f \( -name noop -o -name dummy -o -name x -o -name y \) | grep .
-```
+The initial workflow must check that the generated runner docs exist, including:
+
+- `AGENTS.md`
+- `docs/autonomous-runner.md`
+- `docs/progress.md`
+- `docs/next-steps-plan.md`
+- `docs/development-principles.md`
+- `docs/feedback-taxonomy.md`
+- `docs/feedback-log.md`
+- `docs/loop-trace.md`
+- `docs/handoff-decision.md`
+- `docs/review-and-renewal-loop.md`
+- `docs/harness-repair-loop.md`
+- `docs/loop-hypotheses.md`
+- `docs/stopper-policy.md`
 
 Replace this workflow with stack-specific checks once code exists.
