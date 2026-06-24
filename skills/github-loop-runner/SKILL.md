@@ -1,18 +1,21 @@
 ---
 name: github-loop-runner
-description: Use when the user wants to bootstrap or continue a GitHub-only autonomous development loop with CI verification, docs/progress.md as state, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, harness-layer root cause classification, and milestone PRs through the GitHub connector instead of local clone or package-manager access.
+description: Use when the user wants to bootstrap a GitHub repository with autonomous runner docs and tasks, stop for a handoff decision, produce a complete external-agent prompt, or continue a GitHub-only autonomous development loop with CI verification, docs/progress.md as state, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, harness-layer root cause classification, and milestone PRs through the GitHub connector instead of local clone or package-manager access.
 ---
 
 # GitHub Loop Runner
 
 ## Overview
 
-Turn a product idea or existing repository into a GitHub-only milestone loop. The runner reads and writes through the GitHub connector, verifies through CI, uses `docs/progress.md` as the state source, records feedback and trace evidence, repairs harness defects, gates process changes through hypotheses, then repeats.
+Turn a product idea or existing repository into a GitHub-only autonomous development handoff. The primary flow is: create or prepare the repository, write the plan and runner harness into it, open a bootstrap PR, then stop for a handoff decision. Product development starts only after the user chooses whether this same agent should continue or another agent should receive the complete runner prompt.
+
+When continuing development, the runner reads and writes through the GitHub connector, verifies through CI, uses `docs/progress.md` as the state source, records feedback and trace evidence, repairs harness defects, gates process changes through hypotheses, then repeats.
 
 Load these references when bootstrapping or running:
 
 - `references/repo-scaffold.md`
 - `references/runner-prompt.md`
+- `references/handoff-decision.md`
 - `references/feedback-taxonomy.md`
 - `references/loop-trace.md`
 - `references/review-and-renewal-loop.md`
@@ -57,14 +60,32 @@ Do not require local `git clone`, package managers, or local test commands for t
 4. Generate `AGENTS.md`, runner docs, progress, plan, development principles, feedback taxonomy/log, Loop Trace, Review and Renewal Loop, Harness Repair Loop, loop hypotheses, stopper policy, loop review, PR template, and CI scaffold.
 5. Open one bootstrap PR through the GitHub connector.
 6. Let CI verify. Docs-only CI is acceptable only for bootstrap; the first product milestone must add stack-specific checks.
+7. Stop at the Handoff Decision. Report the repository, bootstrap branch/PR, generated files, CI status, and first TODO milestone from fresh `docs/progress.md`.
+8. Ask the user whether this same agent should continue development or whether the work should be handed to another agent.
+9. If the user chooses external-agent development, fill `references/runner-prompt.md` and return the complete copy-paste prompt. Do not start product milestone work in this session.
+10. If the user explicitly chooses current-agent development, enter the Loop Workflow.
+
+## Handoff Decision
+
+The Handoff Decision separates repository setup from product development. It is required after bootstrap and whenever a stopper or review says safe work can continue but human choice is needed.
+
+Ask:
+
+```text
+Do you want this agent to continue development, or should I hand this to another agent?
+```
+
+Default to external-agent handoff when the user's original intent was to create a repository and tasks for another agent. External-agent handoff must output a full prompt, not a short instruction. The prompt must include repository, base branch, files to read, progress selection rule, CI-as-VERIFY rule, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, stopper rules, and hard guardrails.
 
 ## Loop Workflow
+
+Only enter this workflow after the user explicitly chooses current-agent development or asks to continue development in an already bootstrapped repository.
 
 1. Fetch `docs/autonomous-runner.md`, `docs/progress.md`, `docs/feedback-taxonomy.md`, `docs/feedback-log.md`, `docs/loop-trace.md`, `docs/review-and-renewal-loop.md`, `docs/harness-repair-loop.md`, `docs/loop-hypotheses.md`, and `docs/stopper-policy.md`.
 2. Decide whether review, repair, or hypothesis validation is due before selecting implementation work.
 3. Run the Review and Renewal Loop when no TODO remains, the review interval is reached, CI or feedback repeats, trace evidence is missing, a hypothesis needs a decision, or the user asks.
 4. Run the Harness Repair Loop when repeated `trace_gap`, `protocol_violation`, `weak_verification`, `harness_defect`, missing PR evidence, or inconsistent state appears. Repair only runner docs, feedback taxonomy, loop trace format, review loop rules, stopper policy, PR template, CI scaffold, or milestone slicing rules.
-5. Apply Stop Conditions. If stopping, classify feedback, append trace evidence when possible, and report the reason.
+5. Apply Stop Conditions. If stopping, classify feedback, append trace evidence when possible, then run the Handoff Decision if safe work could continue under another agent.
 6. Re-fetch `docs/progress.md`, select the first `TODO`, and skip `DONE`, `BLOCKED`, `DEFERRED`, and `CANCELLED`.
 7. Append a Loop Trace event for milestone selection, branch creation, PR open, CI observation, feedback classification, merge attempt, progress update, review, repair, hypothesis lifecycle event, and stop.
 8. Create one branch and one PR for the milestone.
@@ -74,11 +95,11 @@ Do not require local `git clone`, package managers, or local test commands for t
 
 ## Feedback Taxonomy
 
-Feedback Taxonomy controls the runner's next actions. Record source, type, severity, evidence, root cause, harness-layer root cause classification, allowed next actions, forbidden next actions, and runner decision. Classify CI, review, mergeability, progress state, trace gaps, harness defects, hypothesis outcomes, review-loop decisions, and stopper decisions.
+Feedback Taxonomy controls the runner's next actions. Record source, type, severity, evidence, root cause, harness-layer root cause classification, allowed next actions, forbidden next actions, and runner decision. Classify CI, review, mergeability, progress state, trace gaps, harness defects, hypothesis outcomes, review-loop decisions, handoff decisions, and stopper decisions.
 
 ## Loop Trace
 
-Loop Trace records observable runner events in `docs/loop-trace.md`. Required events include milestone selection, branch creation, PR open, CI observation, feedback classification, merge attempt, progress update, review, harness repair, hypothesis lifecycle changes, and stop. Missing material trace evidence becomes `trace_gap` feedback.
+Loop Trace records observable runner events in `docs/loop-trace.md`. Required events include milestone selection, branch creation, PR open, CI observation, feedback classification, merge attempt, progress update, review, harness repair, hypothesis lifecycle changes, handoff decisions, and stop. Missing material trace evidence becomes `trace_gap` feedback.
 
 ## Review and Renewal Loop
 
@@ -103,6 +124,7 @@ Hypothesis-Gated Renewal prevents permanent process changes without evidence. Re
 - Classify feedback before reacting.
 - Keep trace evidence current.
 - Gate durable process changes through hypotheses.
+- Keep repository setup separate from product development until the Handoff Decision is resolved.
 - Keep humans in the loop for access, live services, and large architectural pivots.
 
 ## Stop Conditions
@@ -120,12 +142,14 @@ Stop and report instead of forcing progress when:
 - A previously `DONE` milestone regresses.
 - Review finds no meaningful, non-duplicative, verifiable new work.
 
+When stopping after bootstrap or after a safe-to-continue review, run the Handoff Decision instead of silently ending or silently starting product development.
+
 ## Output Contract
 
-For bootstrap work, report repository, branch/PR, files seeded, CI status, and the runner prompt or its location.
+For bootstrap work, report repository, branch/PR, files seeded, CI status, first TODO milestone, and the Handoff Decision question. If the user chooses external-agent development, return the filled external-agent prompt.
 
 For loop work, report selected milestone, feedback classifications and root-cause layers, review/repair status, trace events, hypothesis changes, PR status, CI result, progress update, and next state after re-reading progress.
 
-For review-only work, report trigger, completed work, feedback trends, trace coverage, gaps, hypotheses, harness repairs, plan updates, and stopper decision.
+For review-only work, report trigger, completed work, feedback trends, trace coverage, gaps, hypotheses, harness repairs, plan updates, stopper decision, and whether a Handoff Decision is needed.
 
 For prompt-only work, read `references/runner-prompt.md`, fill placeholders, and return the prompt directly.
