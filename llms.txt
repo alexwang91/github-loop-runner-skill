@@ -43,6 +43,11 @@ Important files:
 - `skills/github-loop-runner/references/repo-scaffold.md`: repository seed file templates.
 - `skills/github-loop-runner/references/runner-prompt.md`: copy-paste autonomous runner prompt.
 - `skills/github-loop-runner/agents/openai.yaml`: Codex UI metadata and GitHub dependency.
+- `agent-prompts/README.md`: index for agent handoff prompts in this repository.
+- `agent-prompts/harness-upgrade-plan.md`: milestone plan for adding Loop Trace, Harness Repair Loop, hypothesis-gated renewal, and harness-layer root cause classification.
+- `agent-prompts/start-harness-upgrade.md`: copy-paste prompt for another agent to read the repository and start the upgrade.
 - `scripts/validate_skill.py`: local/CI validator.
 
 Integrity rule: the runner must re-read `docs/progress.md` after each completed milestone, use CI for verification in GitHub-only mode, and never weaken tests, evals, assertions, or acceptance criteria to get green.
+
+Agent upgrade rule: when improving this skill, start from `agent-prompts/start-harness-upgrade.md`, then follow `agent-prompts/harness-upgrade-plan.md` in small validated milestones.
