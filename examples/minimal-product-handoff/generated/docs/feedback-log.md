@@ -1,0 +1,5 @@
+# Feedback Log
+
+```yaml
+entries: []
+```

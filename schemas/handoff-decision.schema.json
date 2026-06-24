@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Handoff State",
+  "type": "object",
+  "required": ["handoff"],
+  "properties": {
+    "handoff": {
+      "type": "object",
+      "required": ["status", "chosen_mode", "prompt_generated"],
+      "properties": {
+        "status": {"enum": ["pending", "decided"]},
+        "chosen_mode": {"type": ["string", "null"]},
+        "decided_at": {"type": ["string", "null"]},
+        "decided_by": {"type": ["string", "null"]},
+        "prompt_generated": {"type": "boolean"},
+        "bootstrap_pr": {"type": ["integer", "null"]},
+        "first_todo_milestone": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

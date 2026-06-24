@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Long Run Growth Policy",
+  "type": "object",
+  "required": ["long_run_growth"],
+  "properties": {
+    "long_run_growth": {
+      "type": "object",
+      "required": ["enabled", "target_merged_prs", "minimum_merged_prs_before_final_review", "review_interval_prs", "deep_review_interval_prs", "minimum_open_todo_backlog"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "target_merged_prs": {"type": "integer", "minimum": 1},
+        "minimum_merged_prs_before_final_review": {"type": "integer", "minimum": 1},
+        "review_interval_prs": {"type": "integer", "minimum": 1},
+        "deep_review_interval_prs": {"type": "integer", "minimum": 1},
+        "minimum_open_todo_backlog": {"type": "integer", "minimum": 1},
+        "preferred_open_todo_backlog": {"type": "integer", "minimum": 1},
+        "expansion_batch_min": {"type": "integer", "minimum": 1},
+        "expansion_batch_max": {"type": "integer", "minimum": 1},
+        "empty_deep_reviews_before_final_review": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

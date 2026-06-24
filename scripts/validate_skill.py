@@ -1,5 +1,7 @@
 from pathlib import Path
+import json
 import re
+import subprocess
 import sys
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -22,6 +24,19 @@ LOOP_TRACE_FILE = REFERENCES_DIR / "loop-trace.md"
 HARNESS_REPAIR_FILE = REFERENCES_DIR / "harness-repair-loop.md"
 LOOP_HYPOTHESES_FILE = REFERENCES_DIR / "loop-hypotheses.md"
 OPENAI_YAML = SKILL_DIR / "agents" / "openai.yaml"
+
+SCHEMA_DIR = REPO_ROOT / "schemas"
+SCHEMA_FILES = [
+    SCHEMA_DIR / "progress.schema.json",
+    SCHEMA_DIR / "handoff-decision.schema.json",
+    SCHEMA_DIR / "long-run-growth.schema.json",
+    SCHEMA_DIR / "feedback-entry.schema.json",
+    SCHEMA_DIR / "loop-trace-entry.schema.json",
+]
+GENERATED_VALIDATOR_FILE = REPO_ROOT / "scripts" / "validate_generated_repo.py"
+EXAMPLE_ROOT = REPO_ROOT / "examples" / "minimal-product-handoff"
+EXAMPLE_GENERATED_DIR = EXAMPLE_ROOT / "generated"
+EXAMPLE_PROMPT_FILE = EXAMPLE_ROOT / "external-agent-prompt.md"
 
 
 def fail(message: str) -> None:
@@ -73,6 +88,34 @@ def require_phrases(label: str, text: str, phrases: list[str]) -> None:
         require(phrase in text, f"{label} missing phrase: {phrase}")
 
 
+def require_valid_json(path: Path) -> None:
+    text = read(path)
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError as exc:
+        fail(f"Invalid JSON in {path.relative_to(REPO_ROOT)}: {exc}")
+    require(isinstance(parsed, dict), f"Schema file must contain a JSON object: {path.relative_to(REPO_ROOT)}")
+    require("$schema" in parsed, f"Schema file missing $schema: {path.relative_to(REPO_ROOT)}")
+    require("title" in parsed, f"Schema file missing title: {path.relative_to(REPO_ROOT)}")
+
+
+def run_generated_repo_validator() -> None:
+    result = subprocess.run(
+        [sys.executable, str(GENERATED_VALIDATOR_FILE), str(EXAMPLE_GENERATED_DIR)],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        if result.stdout:
+            print(result.stdout)
+        if result.stderr:
+            print(result.stderr, file=sys.stderr)
+        fail("validate_generated_repo.py failed for examples/minimal-product-handoff/generated")
+    if result.stdout:
+        print(result.stdout.strip())
+
+
 def main() -> None:
     readme = read(README_FILE)
     llms = read(LLMS_FILE)
@@ -90,6 +133,11 @@ def main() -> None:
     harness_repair = read(HARNESS_REPAIR_FILE)
     loop_hypotheses = read(LOOP_HYPOTHESES_FILE)
     openai_yaml = read(OPENAI_YAML)
+    generated_validator = read(GENERATED_VALIDATOR_FILE)
+    example_prompt = read(EXAMPLE_PROMPT_FILE)
+
+    for schema_file in SCHEMA_FILES:
+        require_valid_json(schema_file)
 
     fm = frontmatter(skill)
     require("name: github-loop-runner" in fm, "Skill frontmatter must name github-loop-runner")
@@ -291,6 +339,23 @@ def main() -> None:
         "docs/loop-hypotheses.md",
     ])
 
+    require_phrases("Generated repo validator", generated_validator, [
+        "REQUIRED_FILES",
+        "REQUIRED_TRACE_EVENTS",
+        "validate_generated_repo",
+        "docs/long-run-growth-loop.md",
+        "handoff-decision.md",
+        "long-run growth policy checked",
+    ])
+
+    require_phrases("Example external-agent prompt", example_prompt, [
+        "External Agent Prompt",
+        "docs/long-run-growth-loop.md",
+        "first TODO milestone",
+        "growth review due",
+        "deep review due",
+    ])
+
     require_phrases("README", readme, [
         "What It Does",
         "How It Works",
@@ -300,6 +365,7 @@ def main() -> None:
         "Compatibility",
         "Compared To",
         "Handoff Decision",
+        "Long-Run Growth Mode",
         "Feedback Taxonomy",
         "Loop Trace",
         "Harness Repair Loop",
@@ -330,10 +396,12 @@ def main() -> None:
         (LOOP_TRACE_FILE, loop_trace),
         (HARNESS_REPAIR_FILE, harness_repair),
         (LOOP_HYPOTHESES_FILE, loop_hypotheses),
+        (EXAMPLE_PROMPT_FILE, example_prompt),
     ]:
         assert_balanced_fences(path, text)
 
     require("[TODO" not in skill, "SKILL.md contains unresolved placeholder syntax")
+    run_generated_repo_validator()
     print("Skill validation passed")
 
 
