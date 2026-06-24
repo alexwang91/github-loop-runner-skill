@@ -2,31 +2,17 @@
 
 This repository contains one portable agent skill: `github-loop-runner`.
 
-Purpose: bootstrap or continue GitHub-only autonomous development loops. Use it when a user wants a repository seeded with `AGENTS.md`, `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, development principles, a PR template, and CI scaffolding, or when an agent must continue milestone PRs using only the GitHub connector and CI.
+Purpose: bootstrap or continue GitHub-only autonomous development loops. Use it when a user wants runner docs, `docs/progress.md`, a plan, CI scaffolding, loop trace, feedback log, hypothesis log, harness repair protocol, review renewal, and stopper policy.
 
 Supported usage:
 
 - Codex: native local skill under `~/.codex/skills`.
-- Claude Code, Hermes Agent, OpenClaw, Goose, Cursor, Aider, Gemini CLI, and other instruction-aware agents: portable Markdown instruction/playbook. Provide `SKILL.md` plus the relevant reference files as project context, rules, memory, or skill files.
-
-Install for Codex:
-
-```bash
-mkdir -p ~/.codex/skills
-cp -R skills/github-loop-runner ~/.codex/skills/
-```
-
-Windows PowerShell:
-
-```powershell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
-Copy-Item -Recurse -Force ".\skills\github-loop-runner" "$env:USERPROFILE\.codex\skills\github-loop-runner"
-```
+- Other instruction-aware agents: portable Markdown instruction/playbook.
 
 Invoke:
 
 ```text
-Use $github-loop-runner to turn this product idea into a GitHub repo with autonomous runner docs, progress tracking, and milestone PR loops.
+Use $github-loop-runner to turn this product idea into a GitHub repo with autonomous runner docs, progress tracking, loop trace, feedback log, hypothesis log, harness repair protocol, and milestone PR loops.
 ```
 
 Portable invocation:
@@ -34,20 +20,27 @@ Portable invocation:
 ```text
 Use the GitHub Loop Runner skill at skills/github-loop-runner/SKILL.md.
 If bootstrapping a repo, also load skills/github-loop-runner/references/repo-scaffold.md.
+If enabling structured feedback, also load skills/github-loop-runner/references/feedback-taxonomy.md.
+If enabling observability, also load skills/github-loop-runner/references/loop-trace.md.
+If enabling renewal and repair, also load skills/github-loop-runner/references/review-and-renewal-loop.md, skills/github-loop-runner/references/harness-repair-loop.md, skills/github-loop-runner/references/loop-hypotheses.md, and skills/github-loop-runner/references/stopper-policy.md.
 If producing the final runner prompt, also load skills/github-loop-runner/references/runner-prompt.md.
 ```
 
 Important files:
 
-- `skills/github-loop-runner/SKILL.md`: core GitHub-only bootstrap and loop workflow.
-- `skills/github-loop-runner/references/repo-scaffold.md`: repository seed file templates.
-- `skills/github-loop-runner/references/runner-prompt.md`: copy-paste autonomous runner prompt.
-- `skills/github-loop-runner/agents/openai.yaml`: Codex UI metadata and GitHub dependency.
-- `agent-prompts/README.md`: index for agent handoff prompts in this repository.
-- `agent-prompts/harness-upgrade-plan.md`: milestone plan for adding Loop Trace, Harness Repair Loop, hypothesis-gated renewal, and harness-layer root cause classification.
-- `agent-prompts/start-harness-upgrade.md`: copy-paste prompt for another agent to read the repository and start the upgrade.
-- `scripts/validate_skill.py`: local/CI validator.
+- `skills/github-loop-runner/SKILL.md`: core GitHub-only workflow.
+- `skills/github-loop-runner/references/repo-scaffold.md`: generated repository templates.
+- `skills/github-loop-runner/references/runner-prompt.md`: copy-paste runner prompt.
+- `skills/github-loop-runner/references/feedback-taxonomy.md`: feedback types, root-cause layers, allowed actions, and forbidden actions.
+- `skills/github-loop-runner/references/loop-trace.md`: loop trace event format and metrics.
+- `skills/github-loop-runner/references/review-and-renewal-loop.md`: review and renewal rules.
+- `skills/github-loop-runner/references/harness-repair-loop.md`: harness repair protocol.
+- `skills/github-loop-runner/references/loop-hypotheses.md`: hypothesis log rules.
+- `skills/github-loop-runner/references/stopper-policy.md`: hard and soft stoppers.
+- `agent-prompts/README.md`: agent handoff prompt index.
+- `agent-prompts/harness-upgrade-plan.md`: upgrade plan for Loop Trace, harness repair, hypothesis-gated renewal, and harness-layer root cause classification.
+- `scripts/validate_skill.py`: validator.
 
-Integrity rule: the runner must re-read `docs/progress.md` after each completed milestone, use CI for verification in GitHub-only mode, and never weaken tests, evals, assertions, or acceptance criteria to get green.
+Integrity rule: the runner must re-read `docs/progress.md` after each completed milestone, use CI for verification in GitHub-only mode, update loop trace and feedback log when evidence changes, gate process changes through the hypothesis log, and run the harness repair protocol when repeated runner defects appear.
 
-Agent upgrade rule: when improving this skill, start from `agent-prompts/start-harness-upgrade.md`, then follow `agent-prompts/harness-upgrade-plan.md` in small validated milestones.
+Agent upgrade rule: when improving this skill, start from `agent-prompts/start-harness-upgrade.md`, then follow `agent-prompts/harness-upgrade-plan.md` in small validated milestones. The `agent-prompts/` directory is the handoff source for this repository.
