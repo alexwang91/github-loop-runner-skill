@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Feedback Entry",
+  "type": "object",
+  "required": ["id", "source", "type", "severity", "summary", "runner_decision"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^F-[0-9]+$"},
+    "timestamp": {"type": "string"},
+    "source": {"type": "string"},
+    "type": {"type": "string"},
+    "severity": {"enum": ["info", "warning", "blocking", "terminal"]},
+    "milestone": {"type": ["string", "null"]},
+    "branch": {"type": ["string", "null"]},
+    "pr": {"type": ["integer", "null"]},
+    "summary": {"type": "string", "minLength": 1},
+    "evidence": {"type": "object"},
+    "root_cause": {"type": "object"},
+    "allowed_next_actions": {"type": "array", "items": {"type": "string"}},
+    "forbidden_next_actions": {"type": "array", "items": {"type": "string"}},
+    "runner_decision": {"type": "object"}
+  },
+  "additionalProperties": true
+}
