@@ -11,6 +11,7 @@ Use this reference when bootstrapping a repository from a product idea. Fill tem
 | `docs/progress.md` | Single source of truth for milestone state. |
 | `docs/next-steps-plan.md` | Detailed milestone plan and acceptance criteria. |
 | `docs/development-principles.md` | Engineering principles, Methodology Map, Skill Pack Map, and workflow discipline. |
+| `docs/long-run-growth-loop.md` | Long-run review cadence, backlog floor, expansion policy, and final review criteria. |
 | `docs/feedback-taxonomy.md` | Local feedback classification rules. |
 | `docs/feedback-log.md` | Append-only feedback record. |
 | `docs/loop-trace.md` | Observable runner event log. |
@@ -31,14 +32,17 @@ Use this reference when bootstrapping a repository from a product idea. Fill tem
 - Encode Matt Pocock alignment, Superpowers planning/TDD/review/finish, and Karpathy simplicity/surgical guardrails.
 - Include optional invocation names for runtimes that have those skills installed.
 - Bootstrap CI may be docs-only; the first product milestone must add real stack checks.
-- Generate feedback, trace, handoff, review, hypothesis, repair, and stopper files together.
+- Generate feedback, trace, handoff, long-run growth, review, hypothesis, repair, and stopper files together.
 - After bootstrap, stop at the Handoff Decision before product milestone implementation starts.
+- Long-Run Growth Mode should keep a backlog floor and run growth/deep reviews before final review eligibility.
 
 ## `AGENTS.md` Template
 
-Agents should read `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/feedback-taxonomy.md`, `docs/loop-trace.md`, `docs/handoff-decision.md`, and `docs/loop-hypotheses.md` before development.
+Agents should read `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/long-run-growth-loop.md`, `docs/feedback-taxonomy.md`, `docs/loop-trace.md`, `docs/handoff-decision.md`, and `docs/loop-hypotheses.md` before development.
 
 `docs/progress.md` is the state source. Select the first TODO milestone only after the Handoff Decision has selected current-agent development or after another agent receives the complete external-agent prompt.
+
+Before choosing work, apply `docs/long-run-growth-loop.md`: report merged PR count, TODO backlog count, growth review due, deep review due, and final review eligibility.
 
 ## Workflow Discipline
 
@@ -51,6 +55,7 @@ Goal: move each `docs/progress.md` row to DONE through one CI-verified PR into `
 Required sections:
 
 - Handoff Decision
+- Long-Run Growth Mode
 - Soft Check
 - Autonomous Loop
 - Guardrails
@@ -58,15 +63,36 @@ Required sections:
 
 Autonomous Loop summary:
 
-1. Fetch progress, feedback log, loop trace, handoff decision, loop hypotheses, and stopper policy.
+1. Fetch progress, feedback log, loop trace, handoff decision, long-run growth policy, loop hypotheses, and stopper policy.
 2. Confirm that current-agent development or external-agent handoff has been selected.
-3. Decide whether review, harness repair, or hypothesis validation is due.
-4. Select the first TODO row. Skip DONE, BLOCKED, DEFERRED, and CANCELLED.
-5. Append trace events for selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, review_run, harness_repair_run, hypothesis_updated, handoff_decision, and stop.
-6. Plan and implement the smallest vertical slice.
-7. Use CI as VERIFY.
-8. Merge only after CI, progress, feedback, trace, and hypothesis evidence are complete.
-9. Re-fetch progress before choosing the next milestone.
+3. Apply Long-Run Growth Mode: check PR count, backlog floor, growth review, deep review, and final review eligibility.
+4. Decide whether review, harness repair, or hypothesis validation is due.
+5. Select the first TODO row. Skip DONE, BLOCKED, DEFERRED, and CANCELLED.
+6. Append trace events for selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, growth_review, deep_review, review_run, harness_repair_run, hypothesis_updated, handoff_decision, and stop.
+7. Plan and implement the smallest vertical slice.
+8. Use CI as VERIFY.
+9. Merge only after CI, progress, feedback, trace, and hypothesis evidence are complete.
+10. Re-fetch progress before choosing the next milestone.
+
+## `docs/long-run-growth-loop.md` Template
+
+Recommended defaults:
+
+```yaml
+long_run_growth:
+  enabled: true
+  target_merged_prs: 50
+  minimum_merged_prs_before_final_review: 40
+  review_interval_prs: 5
+  deep_review_interval_prs: 10
+  minimum_open_todo_backlog: 12
+  preferred_open_todo_backlog: 20
+  expansion_batch_min: 8
+  expansion_batch_max: 15
+  empty_deep_reviews_before_final_review: 3
+```
+
+Before final review eligibility, an empty TODO list should trigger growth review and plan expansion unless a hard safety stopper applies.
 
 ## `docs/handoff-decision.md` Template
 
@@ -140,7 +166,7 @@ Align, slice, plan, verify first, build surgically, review, finish.
 
 ## `docs/loop-trace.md` Template
 
-Trace metrics should include selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, review_run, harness_repair_run, hypothesis_updated, handoff_decision, and stop.
+Trace metrics should include selected_milestone, branch_created, pr_opened, ci_observed, feedback_classified, merge_attempted, progress_updated, growth_review, deep_review, review_run, harness_repair_run, hypothesis_updated, handoff_decision, and stop.
 
 ## `docs/loop-hypotheses.md` Template
 
@@ -157,6 +183,7 @@ Required checklist items:
 - feedback entries linked when applicable.
 - root-cause layer classified for blocking feedback.
 - active hypotheses updated when applicable.
+- long-run growth policy checked when applicable.
 - handoff decision respected when applicable.
 - harness repair considered when failures repeat.
 - no unrelated refactors.
@@ -171,6 +198,7 @@ The initial workflow must check that the generated runner docs exist, including:
 - `docs/progress.md`
 - `docs/next-steps-plan.md`
 - `docs/development-principles.md`
+- `docs/long-run-growth-loop.md`
 - `docs/feedback-taxonomy.md`
 - `docs/feedback-log.md`
 - `docs/loop-trace.md`
