@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Judge Report",
+  "type": "object",
+  "required": ["id", "verdict", "scores"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^J-[0-9]+$"},
+    "milestone": {"type": ["string", "null"]},
+    "pr": {"type": ["integer", "null"]},
+    "verdict": {"enum": ["pass", "needs_repair", "needs_review", "block_merge"]},
+    "scores": {"type": "object"},
+    "findings": {"type": "array", "items": {"type": "string"}},
+    "required_actions": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}
