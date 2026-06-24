@@ -1,19 +1,19 @@
 ---
 name: github-loop-runner
-description: Use when the user wants to bootstrap or continue a GitHub-only autonomous development loop, initialize a repository from a product idea with agent instructions and runner docs, seed docs/autonomous-runner.md docs/progress.md docs/next-steps-plan.md, add review-and-renewal planning loops, or drive milestone PRs with the GitHub connector and CI instead of local clone or package-manager access.
+description: Use when the user wants to bootstrap or continue a GitHub-only autonomous development loop, initialize a repository from a product idea with agent instructions and runner docs, seed docs/autonomous-runner.md docs/progress.md docs/next-steps-plan.md, add review-and-renewal planning loops, structured feedback taxonomy, or drive milestone PRs with the GitHub connector and CI instead of local clone or package-manager access.
 ---
 
 # GitHub Loop Runner
 
 ## Overview
 
-Turn a product idea or existing GitHub repository into an autonomous, CI-verified milestone loop. The GitHub connector is the working surface: read files, write branches, open PRs, inspect CI, merge, update progress, periodically review completed work, renew the plan, then repeat.
+Turn a product idea or existing GitHub repository into an autonomous, CI-verified milestone loop. The GitHub connector is the working surface: read files, write branches, open PRs, inspect CI, merge, update progress, classify feedback, periodically review completed work, renew the plan, then repeat.
 
 Use this skill in four modes:
 
-- **Bootstrap**: seed a repository with agent instructions, engineering principles, plan, progress, review loop, stopper policy, and runner protocol.
+- **Bootstrap**: seed a repository with agent instructions, engineering principles, plan, progress, feedback taxonomy, review loop, stopper policy, and runner protocol.
 - **Loop**: execute milestone PRs from an existing runner repository.
-- **Review**: inspect completed work, renew the plan, or decide whether the runner should stop.
+- **Review**: inspect completed work, summarize feedback trends, renew the plan, or decide whether the runner should stop.
 - **Prompt**: produce the final copy-paste prompt for a GitHub-only runner.
 
 ## Capability Probe
@@ -54,13 +54,15 @@ If these skills are installed in the current runtime, invoke or follow them expl
 
 1. Resolve the target repository, base branch, and product idea.
 2. Run the capability probe. Ask the user only for missing repository identity, GitHub App access, or an initialized empty repo when the connector cannot proceed.
-3. Read `references/repo-scaffold.md`, `references/review-and-renewal-loop.md`, `references/stopper-policy.md`, and `references/loop-review-template.md`.
+3. Read `references/repo-scaffold.md`, `references/feedback-taxonomy.md`, `references/review-and-renewal-loop.md`, `references/stopper-policy.md`, and `references/loop-review-template.md`.
 4. Convert the idea and workflow references into:
    - `AGENTS.md`
    - `docs/autonomous-runner.md`
    - `docs/progress.md`
    - `docs/next-steps-plan.md`
    - `docs/development-principles.md`
+   - `docs/feedback-taxonomy.md`
+   - `docs/feedback-log.md`
    - `docs/review-and-renewal-loop.md`
    - `docs/stopper-policy.md`
    - `docs/loop-review.md`
@@ -72,10 +74,10 @@ If these skills are installed in the current runtime, invoke or follow them expl
 
 ## Loop Workflow
 
-1. Fetch `docs/autonomous-runner.md`, `docs/progress.md`, `docs/review-and-renewal-loop.md`, and `docs/stopper-policy.md` from the base branch. Treat the runner doc as the standing protocol and `progress.md` as the milestone state source.
+1. Fetch `docs/autonomous-runner.md`, `docs/progress.md`, `docs/feedback-taxonomy.md`, `docs/feedback-log.md`, `docs/review-and-renewal-loop.md`, and `docs/stopper-policy.md` from the base branch. Treat the runner doc as the standing protocol and `progress.md` as the milestone state source.
 2. Determine whether the Review and Renewal Loop is due before selecting implementation work. A review is due when the configured number of milestones has completed, no `TODO` remains, a milestone is blocked or repeatedly fails CI, a higher-risk release step is next, or the user asks for review.
-3. If review is due, run the Review and Renewal Loop: summarize completed work, compare repo state against the product goal, detect gaps and blockers, update `docs/loop-review.md`, update the plan only with specific verifiable milestones, and apply the stopper policy.
-4. If the stopper policy says to stop, stop and report the reason. If the review adds work, re-fetch `docs/progress.md` before selecting a milestone.
+3. If review is due, run the Review and Renewal Loop: summarize completed work, summarize feedback trends, compare repo state against the product goal, detect gaps and blockers, update `docs/loop-review.md`, update the plan only with specific verifiable milestones, and apply the stopper policy.
+4. If the stopper policy says to stop, classify the stopper result using `docs/feedback-taxonomy.md`, append it to `docs/feedback-log.md` when possible, stop, and report the reason. If the review adds work, re-fetch `docs/progress.md` before selecting a milestone.
 5. Fetch `docs/next-steps-plan.md` and `docs/development-principles.md` after identifying the next milestone, then read the matching milestone section and any directly referenced ADRs.
 6. Find the first `TODO` row in `docs/progress.md`. Skip `DONE`, `BLOCKED`, `DEFERRED`, and `CANCELLED`. Do not trust hard-coded milestone text from the user if the current file says otherwise.
 7. If no `TODO` remains after a final review, stop and report whether all rows are `DONE`, blocked, or intentionally complete with no meaningful new work.
@@ -83,19 +85,29 @@ If these skills are installed in the current runtime, invoke or follow them expl
    - **PLAN**: apply the Workflow Discipline from `docs/development-principles.md`, then write the smallest vertical-slice plan from the milestone acceptance criteria.
    - **BRANCH**: create `m<N>-<slug>` from the latest base branch.
    - **BUILD**: edit only necessary files through the GitHub connector. Use structured file APIs; avoid temporary `noop`, `dummy`, `x`, `y`, or `tmp/*` files.
-   - **VERIFY**: open or update the PR and use CI checks as the verification loop. If CI fails, fix the true cause. Never weaken tests, assertions, evals, or acceptance criteria to get green.
-   - **MERGE**: merge only after required checks are green.
+   - **VERIFY**: open or update the PR and use CI checks as the verification loop. After each CI result, classify feedback with `docs/feedback-taxonomy.md`, append the entry to `docs/feedback-log.md`, and choose only allowed next actions. If CI fails, fix the true cause. Never weaken tests, assertions, evals, or acceptance criteria to get green.
+   - **REVIEW**: classify PR review comments, scope drift, weak verification, and merge blockers before deciding the next action.
+   - **MERGE**: merge only after required checks are green and no blocking feedback remains.
 9. Ensure the milestone row becomes `DONE` on the base branch.
 10. Return to step 1. Re-fetch `docs/progress.md` from base before choosing the next milestone.
+
+## Feedback Taxonomy
+
+Feedback Taxonomy is the local control protocol for observations. Use `docs/feedback-taxonomy.md` to classify every meaningful PR update, CI result, review result, merge attempt, review-loop decision, and stopper decision.
+
+A feedback entry should record source, type, severity, milestone, evidence, root cause, allowed next actions, forbidden next actions, and the runner decision. Blocking feedback must be resolved or marked blocked before the runner advances. Terminal feedback stops the runner with a report.
+
+During the Review and Renewal Loop, read `docs/feedback-log.md` and summarize patterns such as repeated CI failures, scope violations, weak verification, merge blockers, regressions, and successful patterns. Use these trends to decide whether to add verification-hardening, blocker-removal, or regression-fix milestones.
 
 ## Review and Renewal Loop
 
 The Review and Renewal Loop is a planning loop, not a feature implementation loop. It keeps the runner from stopping only because the original plan ran out or because the original plan became stale.
 
-During review, read the latest progress, recent merged PRs where available, current plan, development principles, CI/check history where available, and any generated review file. Produce or update `docs/loop-review.md` with:
+During review, read the latest progress, feedback log, recent merged PRs where available, current plan, development principles, CI/check history where available, and any generated review file. Produce or update `docs/loop-review.md` with:
 
 - review metadata: trigger, date, base branch, completed milestones since last review,
 - completed work summary,
+- feedback trends since the last review,
 - current state assessment,
 - gaps, regressions, blockers, and verification weaknesses,
 - plan updates applied,
@@ -114,6 +126,7 @@ Carry these into every bootstrap plan and loop execution:
 - Keep code simple: avoid speculative abstractions, one-off frameworks, and broad rewrites.
 - Make surgical changes: every changed line should trace to the current milestone.
 - Treat CI/evals as specifications: red checks mean investigate and fix real behavior.
+- Classify feedback before reacting: observations become allowed or forbidden next actions through the taxonomy.
 - Keep humans in the loop for sensitive access, live services, security boundaries, and large architectural pivots.
 
 ## Stop Conditions
@@ -128,14 +141,14 @@ Stop and report instead of forcing progress when:
 - A previously `DONE` milestone regresses.
 - The Review and Renewal Loop finds no meaningful, non-duplicative, verifiable new work.
 
-When blocked, update `docs/progress.md` only if you can do so safely through a PR. Mark the row `BLOCKED` and add a specific note describing the missing tool, CI signal, or decision.
+When blocked, update `docs/progress.md` only if you can do so safely through a PR. Mark the row `BLOCKED`, classify the feedback, and add a specific note describing the missing tool, CI signal, or decision.
 
 ## Output Contract
 
 For bootstrap work, report repository, branch/PR, files seeded, CI status, and the generated runner prompt or its location.
 
-For loop work, report the current milestone selected from fresh `docs/progress.md`, whether a Review and Renewal Loop ran, PR number/status, CI result, whether progress was updated, and the next state after re-reading progress.
+For loop work, report the current milestone selected from fresh `docs/progress.md`, feedback classification summary, whether a Review and Renewal Loop ran, PR number/status, CI result, whether progress was updated, and the next state after re-reading progress.
 
-For review-only work, report the review trigger, completed work since the last review, gaps and blockers found, plan updates made or proposed, and stopper decision.
+For review-only work, report the review trigger, completed work since the last review, feedback trends, gaps and blockers found, plan updates made or proposed, and stopper decision.
 
 For prompt-only work, read `references/runner-prompt.md`, fill placeholders, and return the prompt directly.
