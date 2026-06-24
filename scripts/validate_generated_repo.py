@@ -11,6 +11,7 @@ REQUIRED_FILES = [
     "docs/progress.md",
     "docs/next-steps-plan.md",
     "docs/development-principles.md",
+    "docs/github-operation-ledger.md",
     "docs/long-run-growth-loop.md",
     "docs/feedback-taxonomy.md",
     "docs/feedback-log.md",
@@ -97,6 +98,7 @@ def validate_generated_repo(root: Path) -> None:
 
     agents = read(root, "AGENTS.md")
     progress = read(root, "docs/progress.md")
+    ledger = read(root, "docs/github-operation-ledger.md")
     long_run = read(root, "docs/long-run-growth-loop.md")
     handoff = read(root, "docs/handoff-decision.md")
     feedback_log = read(root, "docs/feedback-log.md")
@@ -112,6 +114,7 @@ def validate_generated_repo(root: Path) -> None:
 
     require_phrases("AGENTS.md", agents, [
         "docs/progress.md",
+        "docs/github-operation-ledger.md",
         "docs/long-run-growth-loop.md",
         "docs/agent-judge-loop.md",
         "docs/growth-candidates.md",
@@ -127,6 +130,16 @@ def validate_generated_repo(root: Path) -> None:
     invalid_statuses = sorted({row["status"] for row in rows if row["status"] not in VALID_STATUSES})
     require(not invalid_statuses, f"docs/progress.md contains invalid statuses: {invalid_statuses}")
     require(count_status(rows, "TODO") >= 1, "docs/progress.md should contain at least one TODO milestone")
+
+    require_phrases("docs/github-operation-ledger.md", ledger, [
+        "operation_state",
+        "active_branch",
+        "target_files",
+        "current_step",
+        "next_action",
+        "mutation_budget",
+        "update_ref: 0",
+    ])
 
     require_phrases("docs/long-run-growth-loop.md", long_run, [
         "target_merged_prs",
@@ -163,6 +176,8 @@ def validate_generated_repo(root: Path) -> None:
 
     for relative_path in REQUIRED_FILES:
         if relative_path.startswith(".github/"):
+            continue
+        if relative_path == "docs/github-operation-ledger.md":
             continue
         require(relative_path in workflow, f"verify workflow should check {relative_path}")
 
