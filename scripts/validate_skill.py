@@ -11,6 +11,10 @@ SKILL_DIR = REPO_ROOT / "skills" / "github-loop-runner"
 SKILL_FILE = SKILL_DIR / "SKILL.md"
 SCAFFOLD_FILE = SKILL_DIR / "references" / "repo-scaffold.md"
 PROMPT_FILE = SKILL_DIR / "references" / "runner-prompt.md"
+FEEDBACK_FILE = SKILL_DIR / "references" / "feedback-taxonomy.md"
+REVIEW_FILE = SKILL_DIR / "references" / "review-and-renewal-loop.md"
+STOPPER_FILE = SKILL_DIR / "references" / "stopper-policy.md"
+LOOP_REVIEW_FILE = SKILL_DIR / "references" / "loop-review-template.md"
 OPENAI_YAML = SKILL_DIR / "agents" / "openai.yaml"
 
 
@@ -58,12 +62,21 @@ def assert_balanced_fences(path: Path, text: str) -> None:
     require(not inside, f"Unclosed Markdown fence in {path.relative_to(REPO_ROOT)} starting on line {start_line}")
 
 
+def require_phrases(label: str, text: str, phrases: list[str]) -> None:
+    for phrase in phrases:
+        require(phrase in text, f"{label} missing phrase: {phrase}")
+
+
 def main() -> None:
     readme = read(README_FILE)
     llms = read(LLMS_FILE)
     skill = read(SKILL_FILE)
     scaffold = read(SCAFFOLD_FILE)
     prompt = read(PROMPT_FILE)
+    feedback = read(FEEDBACK_FILE)
+    review = read(REVIEW_FILE)
+    stopper = read(STOPPER_FILE)
+    loop_review = read(LOOP_REVIEW_FILE)
     openai_yaml = read(OPENAI_YAML)
 
     fm = frontmatter(skill)
@@ -71,13 +84,20 @@ def main() -> None:
     require("GitHub-only" in fm and "autonomous" in fm, "Skill description must cover GitHub-only autonomous triggers")
     require("references/repo-scaffold.md" in skill, "SKILL.md must reference repo-scaffold.md")
     require("references/runner-prompt.md" in skill, "SKILL.md must reference runner-prompt.md")
+    require("references/feedback-taxonomy.md" in skill, "SKILL.md must reference feedback-taxonomy.md")
+    require("references/review-and-renewal-loop.md" in skill, "SKILL.md must reference review-and-renewal-loop.md")
+    require("references/stopper-policy.md" in skill, "SKILL.md must reference stopper-policy.md")
+    require("references/loop-review-template.md" in skill, "SKILL.md must reference loop-review-template.md")
     require("$github-loop-runner" in openai_yaml, "openai.yaml default prompt must invoke the skill")
     require("value: \"github\"" in openai_yaml, "openai.yaml must declare GitHub dependency")
 
-    required_skill_phrases = [
+    require_phrases("SKILL.md", skill, [
         "Capability Probe",
         "Source Workflow Map",
         "Optional Skill Invocation Map",
+        "Feedback Taxonomy",
+        "Review and Renewal Loop",
+        "Stop Conditions",
         "$grill-with-docs",
         "$to-issues",
         "$brainstorming",
@@ -85,11 +105,9 @@ def main() -> None:
         "$test-driven-development",
         "$requesting-code-review",
         "$finishing-a-development-branch",
-    ]
-    for phrase in required_skill_phrases:
-        require(phrase in skill, f"SKILL.md missing phrase: {phrase}")
+    ])
 
-    required_scaffold_sections = [
+    require_phrases("Scaffold", scaffold, [
         "Required Files",
         "Seed Generation Rules",
         "Workflow Discipline",
@@ -101,25 +119,58 @@ def main() -> None:
         "Optional Runtime Invocations",
         "`docs/development-principles.md` Template",
         "`.github/workflows/verify.yml` Template",
-    ]
-    for section in required_scaffold_sections:
-        require(section in scaffold, f"Scaffold missing section: {section}")
+    ])
 
-    required_prompt_phrases = [
+    require_phrases("Runner prompt", prompt, [
         "GitHub-only runner",
         "Quietly probe GitHub connector capability",
         "docs/progress.md",
+        "Feedback Taxonomy",
+        "Review and Renewal Loop",
+        "stopper policy",
         "source workflow discipline",
         "Matt Pocock",
         "Superpowers",
         "Karpathy",
         "Use CI as VERIFY",
         "Do not weaken tests",
-    ]
-    for phrase in required_prompt_phrases:
-        require(phrase in prompt, f"Runner prompt missing phrase: {phrase}")
+    ])
 
-    required_readme_sections = [
+    require_phrases("Feedback reference", feedback, [
+        "Feedback Taxonomy Reference",
+        "Feedback Sources",
+        "Feedback Types",
+        "Severity Levels",
+        "Feedback Entry Format",
+        "Allowed Action Map",
+        "Runner Rules",
+    ])
+
+    require_phrases("Review reference", review, [
+        "Review and Renewal Loop Reference",
+        "Trigger Conditions",
+        "Feedback Trends Since Last Review",
+        "Review Steps",
+        "Allowed Plan Updates",
+        "Forbidden Plan Updates",
+    ])
+
+    require_phrases("Stopper reference", stopper, [
+        "Stopper Policy Reference",
+        "Hard Stoppers",
+        "Soft Stoppers",
+        "Default Limits",
+        "Stopper Report",
+    ])
+
+    require_phrases("Loop review template", loop_review, [
+        "Feedback Trends Since Last Review",
+        "Feedback Decision",
+        "Stopper Assessment",
+        "Decision",
+    ])
+
+    require_phrases("README", readme, [
         "What It Does",
         "How It Works",
         "Get Started",
@@ -127,9 +178,9 @@ def main() -> None:
         "Proof",
         "Compatibility",
         "Compared To",
-    ]
-    for section in required_readme_sections:
-        require(section in readme, f"README missing section: {section}")
+        "Feedback Taxonomy",
+        "Review and Renewal Loop",
+    ])
 
     require("github-loop-runner" in llms, "llms.txt must mention github-loop-runner")
 
@@ -139,6 +190,10 @@ def main() -> None:
         (SKILL_FILE, skill),
         (SCAFFOLD_FILE, scaffold),
         (PROMPT_FILE, prompt),
+        (FEEDBACK_FILE, feedback),
+        (REVIEW_FILE, review),
+        (STOPPER_FILE, stopper),
+        (LOOP_REVIEW_FILE, loop_review),
     ]:
         assert_balanced_fences(path, text)
 
