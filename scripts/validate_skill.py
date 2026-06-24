@@ -16,6 +16,10 @@ REVIEW_FILE = SKILL_DIR / "references" / "review-and-renewal-loop.md"
 STOPPER_FILE = SKILL_DIR / "references" / "stopper-policy.md"
 LOOP_REVIEW_FILE = SKILL_DIR / "references" / "loop-review-template.md"
 OPENAI_YAML = SKILL_DIR / "agents" / "openai.yaml"
+AGENT_PROMPTS_DIR = REPO_ROOT / "agent-prompts"
+AGENT_PROMPTS_README = AGENT_PROMPTS_DIR / "README.md"
+HARNESS_UPGRADE_PLAN = AGENT_PROMPTS_DIR / "harness-upgrade-plan.md"
+START_HARNESS_UPGRADE = AGENT_PROMPTS_DIR / "start-harness-upgrade.md"
 
 
 def fail(message: str) -> None:
@@ -78,6 +82,9 @@ def main() -> None:
     stopper = read(STOPPER_FILE)
     loop_review = read(LOOP_REVIEW_FILE)
     openai_yaml = read(OPENAI_YAML)
+    agent_prompts_readme = read(AGENT_PROMPTS_README)
+    harness_upgrade_plan = read(HARNESS_UPGRADE_PLAN)
+    start_harness_upgrade = read(START_HARNESS_UPGRADE)
 
     fm = frontmatter(skill)
     require("name: github-loop-runner" in fm, "Skill frontmatter must name github-loop-runner")
@@ -180,9 +187,33 @@ def main() -> None:
         "Compared To",
         "Feedback Taxonomy",
         "Review and Renewal Loop",
+        "Agent Prompts",
+    ])
+
+    require_phrases("Agent prompts README", agent_prompts_readme, [
+        "Agent Prompts",
+        "harness-upgrade-plan.md",
+        "start-harness-upgrade.md",
+    ])
+
+    require_phrases("Harness upgrade plan", harness_upgrade_plan, [
+        "Harness Upgrade Plan For Agent Workers",
+        "Loop Trace",
+        "Harness Repair Loop",
+        "Hypothesis-Gated Renewal",
+        "harness-layer root cause classification",
+        "python scripts/validate_skill.py",
+    ])
+
+    require_phrases("Start harness upgrade prompt", start_harness_upgrade, [
+        "superpowers:using-superpowers",
+        "agent-prompts/harness-upgrade-plan.md",
+        "python scripts/validate_skill.py",
+        "Preserve the GitHub-only operating model",
     ])
 
     require("github-loop-runner" in llms, "llms.txt must mention github-loop-runner")
+    require("agent-prompts/harness-upgrade-plan.md" in llms, "llms.txt must mention the harness upgrade plan")
 
     for path, text in [
         (README_FILE, readme),
@@ -194,6 +225,9 @@ def main() -> None:
         (REVIEW_FILE, review),
         (STOPPER_FILE, stopper),
         (LOOP_REVIEW_FILE, loop_review),
+        (AGENT_PROMPTS_README, agent_prompts_readme),
+        (HARNESS_UPGRADE_PLAN, harness_upgrade_plan),
+        (START_HARNESS_UPGRADE, start_harness_upgrade),
     ]:
         assert_balanced_fences(path, text)
 

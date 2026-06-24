@@ -34,12 +34,15 @@ _A portable agent skill for bootstrapping and running GitHub-only autonomous dev
 
 GitHub Loop Runner helps an agent turn a rough product idea into a GitHub repository that can keep working through milestone PRs using only the GitHub connector and CI. It seeds runner docs, a progress file, a detailed plan, development principles, a feedback taxonomy, a review-and-renewal loop, a stopper policy, a PR template, and a validation workflow.
 
+This repo also includes `agent-prompts/` handoff prompts for agents that should improve the skill itself. Those prompts tell the next agent to read the repository, validate the current skill, and then implement the harness-observability upgrade in small verified milestones.
+
 ## What It Does
 
 - **Bootstraps autonomous repos** - creates the files a GitHub-only runner needs: `AGENTS.md`, `docs/autonomous-runner.md`, `docs/progress.md`, `docs/next-steps-plan.md`, `docs/development-principles.md`, `docs/feedback-taxonomy.md`, `docs/feedback-log.md`, `docs/review-and-renewal-loop.md`, `docs/stopper-policy.md`, and `docs/loop-review.md`.
 - **Runs milestone loops** - reads `docs/progress.md`, selects the first TODO, opens one PR, waits for CI, classifies feedback, merges, updates progress, then re-reads progress.
 - **Structures feedback** - classifies CI results, PR review, merge blockers, scope drift, regressions, and stopper decisions into typed feedback with allowed and forbidden next actions.
 - **Renews plans periodically** - runs a Review and Renewal Loop after configured intervals, when no TODO remains, or when work gets blocked, then adds only specific and verifiable new milestones.
+- **Hands off skill upgrades** - includes agent-facing prompts and a harness upgrade plan for adding Loop Trace, Harness Repair Loop, hypothesis-gated renewal, and harness-layer root cause classification.
 - **Uses CI as verification** - designed for environments with no local clone, no package manager, and no local test runner.
 - **Makes workflow sources explicit** - maps Matt Pocock skills, Superpowers, and Karpathy-style guidelines into repo docs and optional runtime invocations.
 - **Avoids fake capabilities** - probes GitHub connector access quietly and asks only when repo access, app installation, or an initialized empty repo is missing.
@@ -191,6 +194,13 @@ This repo includes a local validator and GitHub Actions workflow.
 | [Review loop](skills/github-loop-runner/references/review-and-renewal-loop.md) | [Stopper policy](skills/github-loop-runner/references/stopper-policy.md) |
 | [Loop review template](skills/github-loop-runner/references/loop-review-template.md) | [CI workflow](.github/workflows/validate.yml) |
 | [Validation](scripts/validate_skill.py) | [Agent index](llms.txt) |
+| [Agent prompts](agent-prompts/README.md) | [Harness upgrade plan](agent-prompts/harness-upgrade-plan.md) |
+
+## Agent Prompts
+
+Use [agent-prompts/start-harness-upgrade.md](agent-prompts/start-harness-upgrade.md) to start another agent on the harness-observability upgrade.
+
+The prompt instructs the agent to read the repository first, run validation, then follow [agent-prompts/harness-upgrade-plan.md](agent-prompts/harness-upgrade-plan.md) milestone by milestone. The planned upgrade adds Loop Trace, Harness Repair Loop, hypothesis-gated renewal, harness-layer root cause classification, and stronger PR evidence.
 
 ## Compared To
 
