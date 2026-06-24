@@ -11,6 +11,7 @@ SKILL_FILE = SKILL_DIR / "SKILL.md"
 REFERENCES_DIR = SKILL_DIR / "references"
 SCAFFOLD_FILE = REFERENCES_DIR / "repo-scaffold.md"
 PROMPT_FILE = REFERENCES_DIR / "runner-prompt.md"
+HANDOFF_FILE = REFERENCES_DIR / "handoff-decision.md"
 FEEDBACK_FILE = REFERENCES_DIR / "feedback-taxonomy.md"
 REVIEW_FILE = REFERENCES_DIR / "review-and-renewal-loop.md"
 STOPPER_FILE = REFERENCES_DIR / "stopper-policy.md"
@@ -76,6 +77,7 @@ def main() -> None:
     skill = read(SKILL_FILE)
     scaffold = read(SCAFFOLD_FILE)
     prompt = read(PROMPT_FILE)
+    handoff = read(HANDOFF_FILE)
     feedback = read(FEEDBACK_FILE)
     review = read(REVIEW_FILE)
     stopper = read(STOPPER_FILE)
@@ -91,6 +93,7 @@ def main() -> None:
     for reference_name in [
         "repo-scaffold.md",
         "runner-prompt.md",
+        "handoff-decision.md",
         "feedback-taxonomy.md",
         "review-and-renewal-loop.md",
         "stopper-policy.md",
@@ -107,6 +110,7 @@ def main() -> None:
         "Capability Probe",
         "Source Workflow Map",
         "Optional Skill Invocation Map",
+        "Handoff Decision",
         "Feedback Taxonomy",
         "Loop Trace",
         "Harness Repair Loop",
@@ -126,6 +130,7 @@ def main() -> None:
     require_phrases("Scaffold", scaffold, [
         "Required Files",
         "Seed Generation Rules",
+        "Handoff Decision",
         "Workflow Discipline",
         "`docs/autonomous-runner.md` Template",
         "`docs/progress.md` Template",
@@ -140,24 +145,34 @@ def main() -> None:
         "loop trace updated",
         "root-cause layer classified",
         "active hypotheses updated",
+        "handoff decision respected",
     ])
 
     require_phrases("Runner prompt", prompt, [
-        "GitHub-only runner",
+        "GitHub-only development runner",
         "Quietly probe GitHub connector capability",
         "docs/progress.md",
+        "Handoff Decision Prompt",
         "Feedback Taxonomy",
         "Loop Trace",
         "Harness Repair Loop",
         "Hypothesis-Gated Renewal",
         "stopper policy",
-        "source workflow discipline",
         "Matt Pocock",
         "Superpowers",
         "Karpathy",
         "Use CI as VERIFY",
         "Do not weaken tests",
-        "evidence is missing",
+    ])
+
+    require_phrases("Handoff reference", handoff, [
+        "Handoff Decision Reference",
+        "Purpose",
+        "Decision Point",
+        "User Choice",
+        "Required Output At Handoff",
+        "External Agent Prompt Requirements",
+        "Forbidden Behavior",
     ])
 
     require_phrases("Feedback reference", feedback, [
@@ -254,6 +269,7 @@ def main() -> None:
         "Proof",
         "Compatibility",
         "Compared To",
+        "Handoff Decision",
         "Feedback Taxonomy",
         "Loop Trace",
         "Harness Repair Loop",
@@ -274,6 +290,7 @@ def main() -> None:
         (SKILL_FILE, skill),
         (SCAFFOLD_FILE, scaffold),
         (PROMPT_FILE, prompt),
+        (HANDOFF_FILE, handoff),
         (FEEDBACK_FILE, feedback),
         (REVIEW_FILE, review),
         (STOPPER_FILE, stopper),
