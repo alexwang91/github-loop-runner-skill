@@ -1,0 +1,21 @@
+# Long-Run Growth Loop
+
+```yaml
+long_run_growth:
+  enabled: true
+  target_merged_prs: 50
+  minimum_merged_prs_before_final_review: 40
+  review_interval_prs: 5
+  deep_review_interval_prs: 10
+  minimum_open_todo_backlog: 12
+  preferred_open_todo_backlog: 20
+  expansion_batch_min: 8
+  expansion_batch_max: 15
+  empty_deep_reviews_before_final_review: 3
+```
+
+Before final review eligibility, an empty TODO list should trigger growth review and plan expansion unless a hard safety stopper applies.
+
+Growth review checks backlog count and product-goal alignment.
+
+Deep review checks product surface, correctness, verification, operability, architecture, security/governance, documentation, and harness quality.
