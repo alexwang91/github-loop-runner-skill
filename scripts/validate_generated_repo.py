@@ -113,6 +113,12 @@ def validate_generated_repo(root: Path) -> None:
     require_phrases("AGENTS.md", agents, [
         "docs/progress.md",
         "docs/long-run-growth-loop.md",
+        "docs/agent-judge-loop.md",
+        "docs/growth-candidates.md",
+        "docs/runner-memory.md",
+        "docs/codebase-localization.md",
+        "docs/workflow-graph.md",
+        "docs/loop-acceptance-tests.md",
         "docs/handoff-decision.md",
     ])
 
