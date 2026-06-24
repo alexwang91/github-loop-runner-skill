@@ -12,6 +12,8 @@ REFERENCES_DIR = SKILL_DIR / "references"
 SCAFFOLD_FILE = REFERENCES_DIR / "repo-scaffold.md"
 PROMPT_FILE = REFERENCES_DIR / "runner-prompt.md"
 HANDOFF_FILE = REFERENCES_DIR / "handoff-decision.md"
+LONG_RUN_FILE = REFERENCES_DIR / "long-run-growth-loop.md"
+LONG_RUN_ADDENDUM_FILE = REFERENCES_DIR / "long-run-planning-addendum.md"
 FEEDBACK_FILE = REFERENCES_DIR / "feedback-taxonomy.md"
 REVIEW_FILE = REFERENCES_DIR / "review-and-renewal-loop.md"
 STOPPER_FILE = REFERENCES_DIR / "stopper-policy.md"
@@ -78,6 +80,8 @@ def main() -> None:
     scaffold = read(SCAFFOLD_FILE)
     prompt = read(PROMPT_FILE)
     handoff = read(HANDOFF_FILE)
+    long_run = read(LONG_RUN_FILE)
+    long_run_addendum = read(LONG_RUN_ADDENDUM_FILE)
     feedback = read(FEEDBACK_FILE)
     review = read(REVIEW_FILE)
     stopper = read(STOPPER_FILE)
@@ -94,6 +98,7 @@ def main() -> None:
         "repo-scaffold.md",
         "runner-prompt.md",
         "handoff-decision.md",
+        "long-run-growth-loop.md",
         "feedback-taxonomy.md",
         "review-and-renewal-loop.md",
         "stopper-policy.md",
@@ -111,6 +116,7 @@ def main() -> None:
         "Source Workflow Map",
         "Optional Skill Invocation Map",
         "Handoff Decision",
+        "Long-Run Growth Mode",
         "Feedback Taxonomy",
         "Loop Trace",
         "Harness Repair Loop",
@@ -131,6 +137,7 @@ def main() -> None:
         "Required Files",
         "Seed Generation Rules",
         "Handoff Decision",
+        "Long-Run Growth Mode",
         "Workflow Discipline",
         "`docs/autonomous-runner.md` Template",
         "`docs/progress.md` Template",
@@ -146,6 +153,7 @@ def main() -> None:
         "root-cause layer classified",
         "active hypotheses updated",
         "handoff decision respected",
+        "long-run growth policy checked",
     ])
 
     require_phrases("Runner prompt", prompt, [
@@ -173,6 +181,28 @@ def main() -> None:
         "Required Output At Handoff",
         "External Agent Prompt Requirements",
         "Forbidden Behavior",
+    ])
+
+    require_phrases("Long-run reference", long_run, [
+        "Long-Run Growth Loop Reference",
+        "Purpose",
+        "Default Policy",
+        "Core Rule",
+        "Trigger Conditions",
+        "Deep Review Questions",
+        "Plan Expansion Categories",
+        "Milestone Requirements",
+        "Backlog Floor",
+        "Stop Candidate Loop",
+    ])
+
+    require_phrases("Long-run addendum", long_run_addendum, [
+        "Long-Run Planning Addendum",
+        "Additional File",
+        "Additional State Report",
+        "Planning Rules",
+        "Default Targets",
+        "Expansion Rules",
     ])
 
     require_phrases("Feedback reference", feedback, [
@@ -291,6 +321,8 @@ def main() -> None:
         (SCAFFOLD_FILE, scaffold),
         (PROMPT_FILE, prompt),
         (HANDOFF_FILE, handoff),
+        (LONG_RUN_FILE, long_run),
+        (LONG_RUN_ADDENDUM_FILE, long_run_addendum),
         (FEEDBACK_FILE, feedback),
         (REVIEW_FILE, review),
         (STOPPER_FILE, stopper),
