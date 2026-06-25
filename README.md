@@ -117,6 +117,8 @@ read progress
 
 ## Documentation
 
+### Primary docs
+
 | Document | Purpose |
 | --- | --- |
 | [Stable v1 freeze](docs/stable-v1.md) | Scope, non-goals, and change admission rules. |
@@ -124,12 +126,21 @@ read progress
 | [Skill workflow](skills/github-loop-runner/SKILL.md) | Main execution protocol. |
 | [Repo scaffold](skills/github-loop-runner/references/repo-scaffold.md) | Generated repo templates. |
 | [Runner prompt](skills/github-loop-runner/references/runner-prompt.md) | External agent prompt reference. |
+| [Handoff Decision](skills/github-loop-runner/references/handoff-decision.md) | Bootstrap-to-development decision boundary. |
 | [GitHub Operation Ledger](skills/github-loop-runner/references/github-operation-ledger.md) | Write-operation state and branch/ref safety. |
 | [Long-Run Growth Loop](skills/github-loop-runner/references/long-run-growth-loop.md) | Backlog floor and review cadence. |
 | [Feedback taxonomy](skills/github-loop-runner/references/feedback-taxonomy.md) | Feedback classification. |
 | [Loop Trace](skills/github-loop-runner/references/loop-trace.md) | Evidence log protocol. |
 | [Harness Repair Loop](skills/github-loop-runner/references/harness-repair-loop.md) | Repair protocol for runner defects. |
 | [Stopper policy](skills/github-loop-runner/references/stopper-policy.md) | Safe stopping conditions. |
+
+### Supporting references
+
+| Document | Purpose |
+| --- | --- |
+| [Loop Hypotheses](skills/github-loop-runner/references/loop-hypotheses.md) | Evidence-gated process hypotheses. |
+| [Loop Review Template](skills/github-loop-runner/references/loop-review-template.md) | Review output template. |
+| [Long-Run Planning Addendum](skills/github-loop-runner/references/long-run-planning-addendum.md) | External prompt addendum for long-run planning. |
 
 ## Proof
 
