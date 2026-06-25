@@ -1,0 +1,48 @@
+skill:
+  name: github-loop-runner
+
+references:
+  - id: github_operation_ledger
+    file: skills/github-loop-runner/references/github-operation-ledger.md
+    schema: schemas/github-operation-ledger.schema.json
+    required_in:
+      - SKILL.md
+      - repo-scaffold.md
+      - runner-prompt.md
+      - generated_repo
+
+  - id: long_run_growth
+    file: skills/github-loop-runner/references/long-run-growth-loop.md
+    required_in:
+      - SKILL.md
+      - repo-scaffold.md
+      - runner-prompt.md
+
+  - id: feedback_taxonomy
+    file: skills/github-loop-runner/references/feedback-taxonomy.md
+
+  - id: loop_trace
+    file: skills/github-loop-runner/references/loop-trace.md
+
+  - id: agent_judge_loop
+    file: skills/github-loop-runner/references/agent-judge-loop.md
+
+  - id: runner_memory
+    file: skills/github-loop-runner/references/runner-memory.md
+
+  - id: codebase_localization
+    file: skills/github-loop-runner/references/codebase-localization.md
+
+  - id: workflow_graph
+    file: skills/github-loop-runner/references/workflow-graph.md
+
+generated_repo:
+  required_files:
+    - AGENTS.md
+    - docs/progress.md
+    - docs/next-steps-plan.md
+    - docs/github-operation-ledger.md
+
+validation:
+  mode: schema_driven
+  allow_phrase_checks: false
