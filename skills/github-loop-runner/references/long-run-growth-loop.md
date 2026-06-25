@@ -14,21 +14,21 @@ The goal is not to create busywork. The goal is to force periodic project-level 
 long_run_growth:
   enabled: true
   target_merged_prs: 50
-  minimum_merged_prs_before_final_stop: 40
+  minimum_merged_prs_before_final_review: 40
   review_interval_prs: 5
   deep_review_interval_prs: 10
   minimum_open_todo_backlog: 12
   preferred_open_todo_backlog: 20
   expansion_batch_min: 8
   expansion_batch_max: 15
-  stop_requires_consecutive_empty_deep_reviews: 3
+  empty_deep_reviews_before_final_review: 3
 ```
 
 Generated repositories may tune these values, but they should keep an explicit minimum PR budget and backlog floor.
 
 ## Core Rule
 
-Before `minimum_merged_prs_before_final_stop` is reached, no TODO remaining is not a final stop condition. It is a mandatory trigger for Long-Run Growth Review.
+Before `minimum_merged_prs_before_final_review` is reached, no TODO remaining is not a final stop condition. It is a mandatory trigger for Long-Run Growth Review.
 
 The runner must expand the plan until the backlog floor is restored, unless a hard safety stopper applies.
 
@@ -91,8 +91,6 @@ Every generated milestone must include:
 Do not add milestones named cleanup, polish, improve quality, maybe refactor, miscellaneous, follow-up, or investigate later.
 
 ## Backlog Floor
-
-The runner must keep enough future work available:
 
 ```yaml
 backlog_policy:
