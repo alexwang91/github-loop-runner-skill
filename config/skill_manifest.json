@@ -14,6 +14,7 @@
       "ci_verification",
       "long_run_growth",
       "feedback_trace",
+      "loop_hypotheses",
       "harness_repair"
     ],
     "non_goals": [
@@ -27,6 +28,8 @@
     {
       "id": "github_operation_ledger",
       "file": "skills/github-loop-runner/references/github-operation-ledger.md",
+      "required": true,
+      "role": "core_safety",
       "schema": "schemas/github-operation-ledger.schema.json",
       "required_in": [
         "SKILL.md",
@@ -38,31 +41,56 @@
     {
       "id": "long_run_growth",
       "file": "skills/github-loop-runner/references/long-run-growth-loop.md",
-      "required_in": [
-        "SKILL.md",
-        "repo-scaffold.md",
-        "runner-prompt.md"
-      ]
+      "required": true,
+      "role": "planning"
     },
     {
       "id": "feedback_taxonomy",
-      "file": "skills/github-loop-runner/references/feedback-taxonomy.md"
+      "file": "skills/github-loop-runner/references/feedback-taxonomy.md",
+      "required": true,
+      "role": "evidence"
     },
     {
       "id": "loop_trace",
-      "file": "skills/github-loop-runner/references/loop-trace.md"
+      "file": "skills/github-loop-runner/references/loop-trace.md",
+      "required": true,
+      "role": "evidence"
+    },
+    {
+      "id": "loop_hypotheses",
+      "file": "skills/github-loop-runner/references/loop-hypotheses.md",
+      "required": true,
+      "role": "evidence"
     },
     {
       "id": "harness_repair_loop",
-      "file": "skills/github-loop-runner/references/harness-repair-loop.md"
+      "file": "skills/github-loop-runner/references/harness-repair-loop.md",
+      "required": true,
+      "role": "repair"
     },
     {
       "id": "review_and_renewal_loop",
-      "file": "skills/github-loop-runner/references/review-and-renewal-loop.md"
+      "file": "skills/github-loop-runner/references/review-and-renewal-loop.md",
+      "required": true,
+      "role": "planning"
     },
     {
       "id": "stopper_policy",
-      "file": "skills/github-loop-runner/references/stopper-policy.md"
+      "file": "skills/github-loop-runner/references/stopper-policy.md",
+      "required": true,
+      "role": "control"
+    },
+    {
+      "id": "loop_review_template",
+      "file": "skills/github-loop-runner/references/loop-review-template.md",
+      "required": false,
+      "role": "support_template"
+    },
+    {
+      "id": "long_run_planning_addendum",
+      "file": "skills/github-loop-runner/references/long-run-planning-addendum.md",
+      "required": false,
+      "role": "external_prompt_addendum"
     }
   ],
   "generated_repo": {
