@@ -1,6 +1,27 @@
 {
   "skill": {
-    "name": "github-loop-runner"
+    "name": "github-loop-runner",
+    "release": "v1",
+    "stability": "frozen",
+    "positioning": "GitHub Loop Engine, not a runtime DSL"
+  },
+  "scope": {
+    "core": [
+      "handoff_decision",
+      "github_operation_ledger",
+      "progress_state",
+      "single_pr_loop",
+      "ci_verification",
+      "long_run_growth",
+      "feedback_trace",
+      "harness_repair"
+    ],
+    "non_goals": [
+      "general agent OS",
+      "runtime DSL expansion",
+      "self-modifying CI interpreter",
+      "unbounded protocol growth"
+    ]
   },
   "references": [
     {
@@ -32,20 +53,16 @@
       "file": "skills/github-loop-runner/references/loop-trace.md"
     },
     {
-      "id": "agent_judge_loop",
-      "file": "skills/github-loop-runner/references/agent-judge-loop.md"
+      "id": "harness_repair_loop",
+      "file": "skills/github-loop-runner/references/harness-repair-loop.md"
     },
     {
-      "id": "runner_memory",
-      "file": "skills/github-loop-runner/references/runner-memory.md"
+      "id": "review_and_renewal_loop",
+      "file": "skills/github-loop-runner/references/review-and-renewal-loop.md"
     },
     {
-      "id": "codebase_localization",
-      "file": "skills/github-loop-runner/references/codebase-localization.md"
-    },
-    {
-      "id": "workflow_graph",
-      "file": "skills/github-loop-runner/references/workflow-graph.md"
+      "id": "stopper_policy",
+      "file": "skills/github-loop-runner/references/stopper-policy.md"
     }
   ],
   "generated_repo": {
@@ -57,7 +74,8 @@
     ]
   },
   "validation": {
-    "mode": "schema_driven",
-    "allow_phrase_checks": false
+    "mode": "stable_v1_sanity",
+    "allow_phrase_checks": false,
+    "ci_role": "safety gate, not runtime interpreter"
   }
 }

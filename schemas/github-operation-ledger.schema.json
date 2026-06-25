@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GitHub Operation Ledger",
+  "type": "object",
+  "required": ["repo", "base_branch", "active_branch", "target_files", "current_step", "next_action", "completed_steps"],
+  "properties": {
+    "repo": {"type": "string"},
+    "base_branch": {"type": "string"},
+    "active_branch": {"type": ["string", "null"]},
+    "target_files": {"type": "array", "items": {"type": "string"}},
+    "current_step": {"type": "string"},
+    "next_action": {"type": "string"},
+    "completed_steps": {"type": "object"},
+    "mutation_budget": {"type": "object"},
+    "forbidden_actions": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

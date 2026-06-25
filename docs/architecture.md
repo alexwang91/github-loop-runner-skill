@@ -1,66 +1,97 @@
 # Architecture Overview
 
-This document defines the system architecture of the GitHub Loop Runner skill.
+This document freezes the GitHub Loop Runner architecture at **GitHub Loop Engine v1**.
 
-## System Layers
+The project is intentionally **not** an agent OS, runtime DSL, or self-modifying CI framework. It is a stable GitHub-only loop engine for preparing a repository, handing work to an agent, and executing milestone PR loops safely.
 
-### 1. Control Plane
-Responsible for safe execution control and stopping conditions.
+## V1 Scope
+
+GitHub Loop Engine v1 has four core responsibilities:
+
+1. Prepare a repository with runner docs and progress state.
+2. Stop at a Handoff Decision before product work starts.
+3. Execute one milestone per branch/PR through GitHub connector APIs and CI.
+4. Keep the loop safe through operation state, feedback, trace, review, repair, and long-run backlog renewal.
+
+## Core System Layers
+
+### 1. Control Layer
+
+Prevents unsafe or ambiguous work.
 
 - Handoff Decision
 - GitHub Operation Ledger
 - Stopper Policy
 
-### 2. Execution Plane
-Responsible for performing GitHub-based development loops.
+### 2. Execution Layer
 
-- SKILL.md execution protocol
-- progress.md as single state source
+Runs the smallest useful GitHub loop.
+
+- `SKILL.md` execution protocol
+- `docs/progress.md` as state source
 - GitHub connector operations
-- CI as VERIFY
+- one branch / one PR / CI / merge
 
-### 3. Evaluation Plane
-Responsible for correctness and process quality.
+### 3. Verification Layer
+
+Keeps the loop auditable without turning CI into a runtime interpreter.
+
+- CI as VERIFY
+- `scripts/validate_skill.py`
+- optional generated-repo sanity checks
+
+### 4. Planning Layer
+
+Keeps long-running work useful without unbounded expansion.
+
+- Long-Run Growth Loop
+- Review and Renewal Loop
+- Harness Repair Loop
+
+### 5. Evidence Layer
+
+Records why the runner acted.
 
 - Feedback Taxonomy
 - Loop Trace
-- Agent Judge Loop
-- Loop Acceptance Tests
-
-### 4. Planning Plane
-Responsible for long-term expansion and backlog management.
-
-- Long-Run Growth Loop
-- Growth Candidate Selection
-- Review and Renewal Loop
-
-### 5. Memory Plane
-Responsible for durable learning and compression.
-
-- Runner Memory
 - Loop Hypotheses
 
-### 6. Localization Plane
-Responsible for scoping changes before execution.
+## Frozen Non-Goals
 
-- Codebase Localization
+The following are explicitly out of scope for v1:
 
-## Data Flow
+- general agent OS,
+- runtime DSL expansion,
+- self-modifying CI interpreter,
+- manifest-as-program execution,
+- unbounded protocol growth,
+- local-first execution replacing CI,
+- multi-agent orchestration beyond handoff prompts.
 
-1. Read progress + ledger + trace
-2. Apply long-run growth policy
-3. Localize target scope
-4. Execute single vertical slice PR
-5. Run CI as VERIFY
-6. Update feedback + trace + memory
-7. Re-evaluate planning state
+## Stable Data Flow
+
+1. Read `docs/progress.md`, handoff state, ledger state, feedback, and trace.
+2. Apply long-run growth only when due.
+3. Select the first TODO milestone.
+4. Declare GitHub operation state.
+5. Create one clean branch and one PR.
+6. Use CI as VERIFY.
+7. Record feedback and trace.
+8. Merge or block.
+9. Re-read progress.
 
 ## Design Principle
 
 The system prioritizes:
 
-- single source of truth (progress.md)
-- explicit mutation control (operation ledger)
-- long-run backlog sustainability
-- CI-driven verification
-- strict GitHub-only execution boundary
+- clarity over abstraction,
+- deterministic GitHub operations,
+- explicit mutation control,
+- CI-driven verification,
+- `docs/progress.md` as the state source,
+- useful long-run planning without busywork,
+- stopping before unsafe work.
+
+## Change Policy
+
+Future changes should preserve v1 scope. New protocols should be rejected unless they directly strengthen one of the four core responsibilities above.
