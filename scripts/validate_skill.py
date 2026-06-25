@@ -34,22 +34,28 @@ def main() -> None:
     read(README_FILE)
     read(LLMS_FILE)
 
-    # Validate references existence
+    if manifest.get("skill", {}).get("name") != "github-loop-runner":
+        fail("Manifest skill name must be github-loop-runner")
+
+    if manifest.get("skill", {}).get("release") != "v1":
+        fail("Manifest must declare release v1")
+
+    if manifest.get("skill", {}).get("stability") != "frozen":
+        fail("Manifest must declare frozen stability")
+
     for ref in manifest.get("references", []):
         file_path = REPO_ROOT / ref["file"]
         if not file_path.is_file():
             fail(f"Missing reference file: {ref['file']}")
 
-    # Validate required generated repo files
-    for f in manifest.get("generated_repo", {}).get("required_files", []):
-        if not (REPO_ROOT / f).is_file():
-            fail(f"Missing required generated repo file: {f}")
+        schema = ref.get("schema")
+        if schema and not (REPO_ROOT / schema).is_file():
+            fail(f"Missing schema file: {schema}")
 
-    # Minimal sanity checks for SKILL.md
     if "github-loop-runner" not in skill:
         fail("SKILL.md missing skill name")
 
-    print("Skill validation passed (manifest-driven)")
+    print("Skill validation passed (stable v1)")
 
 
 if __name__ == "__main__":
