@@ -42,6 +42,7 @@ def main() -> None:
         "long_run_growth",
         "feedback_taxonomy",
         "loop_trace",
+        "loop_hypotheses",
         "harness_repair_loop",
         "review_and_renewal_loop",
         "stopper_policy",
@@ -50,6 +51,12 @@ def main() -> None:
     missing = expected_core - ids
     if missing:
         fail(f"Missing stable v1 core components in manifest: {sorted(missing)}")
+
+    required_refs = [r for r in refs if r.get("required", True)]
+    for ref in required_refs:
+        path = REPO_ROOT / ref["file"]
+        if not path.is_file():
+            fail(f"Missing required reference file: {ref['file']}")
 
     non_goals = set(manifest.get("scope", {}).get("non_goals", []))
     required_non_goals = {
