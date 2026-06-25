@@ -18,3 +18,9 @@ jobs:
 
       - name: Validate skill files
         run: python scripts/validate_skill.py
+
+      - name: Validate generated repo
+        run: python scripts/validate_generated_repo.py examples/minimal-product-handoff/generated
+
+      - name: Validate evaluation stack
+        run: python scripts/validate_evaluation_stack.py
