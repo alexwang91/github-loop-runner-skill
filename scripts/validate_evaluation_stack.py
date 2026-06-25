@@ -25,32 +25,45 @@ def load_manifest() -> dict:
 
 def main() -> None:
     manifest = load_manifest()
+    refs = manifest.get("references", [])
 
-    # Minimal evaluation stack validation (manifest completeness check)
-    required_refs = manifest.get("references", [])
+    if manifest.get("skill", {}).get("release") != "v1":
+        fail("Manifest must declare release v1")
 
-    if not required_refs:
+    if manifest.get("skill", {}).get("stability") != "frozen":
+        fail("Manifest must declare frozen stability")
+
+    if not refs:
         fail("Manifest has no references")
 
-    # Ensure core planes exist in architecture expectation
-    required_ids = {r["id"] for r in required_refs}
-
-    expected = {
+    ids = {r["id"] for r in refs}
+    expected_core = {
         "github_operation_ledger",
         "long_run_growth",
         "feedback_taxonomy",
         "loop_trace",
-        "agent_judge_loop",
-        "runner_memory",
-        "codebase_localization",
-        "workflow_graph",
+        "harness_repair_loop",
+        "review_and_renewal_loop",
+        "stopper_policy",
     }
 
-    missing = expected - required_ids
+    missing = expected_core - ids
     if missing:
-        fail(f"Missing evaluation stack components in manifest: {missing}")
+        fail(f"Missing stable v1 core components in manifest: {sorted(missing)}")
 
-    print("Evaluation stack validation passed (manifest-driven)")
+    non_goals = set(manifest.get("scope", {}).get("non_goals", []))
+    required_non_goals = {
+        "general agent OS",
+        "runtime DSL expansion",
+        "self-modifying CI interpreter",
+        "unbounded protocol growth",
+    }
+
+    missing_non_goals = required_non_goals - non_goals
+    if missing_non_goals:
+        fail(f"Missing stable v1 non-goals: {sorted(missing_non_goals)}")
+
+    print("Stable v1 validation passed")
 
 
 if __name__ == "__main__":
