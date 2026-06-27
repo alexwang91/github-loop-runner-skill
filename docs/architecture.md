@@ -11,7 +11,7 @@ GitHub Loop Engine v1 has four core responsibilities:
 1. Prepare a repository with runner docs and progress state.
 2. Stop at a Handoff Decision before product work starts.
 3. Execute one milestone per branch/PR through GitHub connector APIs and CI.
-4. Keep the loop safe through operation state, feedback, trace, review, repair, and long-run backlog renewal.
+4. Keep the loop safe and useful through operation state, coding skill gates, controlled research intake, feedback, trace, review, repair, and long-run backlog renewal.
 
 ## Core System Layers
 
@@ -31,6 +31,7 @@ Runs the smallest useful GitHub loop.
 - `docs/progress.md` as state source
 - GitHub connector operations
 - one branch / one PR / CI / merge
+- Every-PR Coding Skill Gate
 
 ### 3. Verification Layer
 
@@ -45,6 +46,7 @@ Keeps the loop auditable without turning CI into a runtime interpreter.
 Keeps long-running work useful without unbounded expansion.
 
 - Long-Run Growth Loop
+- Controlled Research Intake
 - Review and Renewal Loop
 - Harness Repair Loop
 
@@ -55,6 +57,20 @@ Records why the runner acted.
 - Feedback Taxonomy
 - Loop Trace
 - Loop Hypotheses
+- research absorption and rejection records
+
+## Loop Engineering Primitive Mapping
+
+Stable v1 maps common loop-engineering primitives into a narrow GitHub-only model:
+
+| Primitive | Stable v1 mapping | Boundary |
+| --- | --- | --- |
+| Automation | Human, GitHub, or external trigger | v1 does not own cron, webhook daemons, or schedulers. |
+| Worktree | GitHub branch + PR isolation | local worktree managers are out of scope. |
+| Skills | `SKILL.md` + references + Every-PR Coding Skill Gate | skills guide execution; they do not create a runtime DSL. |
+| Plugins / MCP | GitHub connector + CI | no general MCP registry in v1. |
+| Sub-agents | Maker/Checker discipline | no multi-agent runtime required. |
+| Memory | Markdown state files: progress, trace, feedback, hypotheses, ledger | no database memory in v1. |
 
 ## Frozen Non-Goals
 
@@ -66,19 +82,26 @@ The following are explicitly out of scope for v1:
 - manifest-as-program execution,
 - unbounded protocol growth,
 - local-first execution replacing CI,
-- multi-agent orchestration beyond handoff prompts.
+- multi-agent orchestration beyond handoff prompts,
+- broad research on every PR,
+- scheduler or daemon ownership,
+- general MCP registry,
+- local worktree manager,
+- database-backed memory.
 
 ## Stable Data Flow
 
 1. Read `docs/progress.md`, handoff state, ledger state, feedback, and trace.
 2. Apply long-run growth only when due.
-3. Select the first TODO milestone.
-4. Declare GitHub operation state.
-5. Create one clean branch and one PR.
-6. Use CI as VERIFY.
-7. Record feedback and trace.
-8. Merge or block.
-9. Re-read progress.
+3. Run research intake only when cadence or a bounded domain/architecture decision requires it.
+4. Select the first TODO milestone.
+5. Run the Every-PR Coding Skill Gate.
+6. Declare GitHub operation state.
+7. Create one clean branch and one PR.
+8. Use CI as VERIFY.
+9. Record feedback and trace.
+10. Merge or block.
+11. Re-read progress.
 
 ## Design Principle
 
@@ -90,6 +113,7 @@ The system prioritizes:
 - CI-driven verification,
 - `docs/progress.md` as the state source,
 - useful long-run planning without busywork,
+- controlled research absorption without scope drift,
 - stopping before unsafe work.
 
 ## Change Policy
