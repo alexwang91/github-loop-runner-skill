@@ -2,7 +2,7 @@
 
 This repository contains one portable agent skill: `github-loop-runner`.
 
-Purpose: bootstrap or continue GitHub-only autonomous development loops. Use it when a user wants runner docs, `docs/progress.md`, a plan, CI scaffolding, GitHub operation state, loop trace, feedback log, hypothesis log, harness repair protocol, review renewal, and stopper policy.
+Purpose: bootstrap or continue GitHub-only autonomous development loops. Use it when a user wants runner docs, `docs/progress.md`, a plan, CI scaffolding, GitHub operation state, controlled research intake, loop trace, feedback log, hypothesis log, harness repair protocol, review renewal, and stopper policy.
 
 Supported usage:
 
@@ -12,7 +12,7 @@ Supported usage:
 Invoke:
 
 ```text
-Use $github-loop-runner to turn this product idea into a GitHub repo with autonomous runner docs, progress tracking, GitHub operation ledger, loop trace, feedback log, hypothesis log, harness repair protocol, and milestone PR loops.
+Use $github-loop-runner to turn this product idea into a GitHub repo with autonomous runner docs, progress tracking, GitHub operation ledger, controlled research intake, loop trace, feedback log, hypothesis log, harness repair protocol, and milestone PR loops.
 ```
 
 Portable invocation:
@@ -21,6 +21,7 @@ Portable invocation:
 Use the GitHub Loop Runner skill at skills/github-loop-runner/SKILL.md.
 If bootstrapping a repo, also load skills/github-loop-runner/references/repo-scaffold.md.
 If producing the final runner prompt, also load skills/github-loop-runner/references/runner-prompt.md and skills/github-loop-runner/references/long-run-planning-addendum.md when Long-Run Growth Mode is enabled.
+If enabling controlled external research, also load skills/github-loop-runner/references/research-intake.md.
 If enforcing GitHub write safety, also load skills/github-loop-runner/references/github-operation-ledger.md.
 If enabling structured feedback, also load skills/github-loop-runner/references/feedback-taxonomy.md.
 If enabling observability, also load skills/github-loop-runner/references/loop-trace.md.
@@ -33,6 +34,7 @@ Important files:
 - `skills/github-loop-runner/references/repo-scaffold.md`: generated repository templates.
 - `skills/github-loop-runner/references/runner-prompt.md`: copy-paste runner prompt.
 - `skills/github-loop-runner/references/long-run-planning-addendum.md`: addendum for long-running external-agent prompts.
+- `skills/github-loop-runner/references/research-intake.md`: controlled external research cadence and absorption rules.
 - `skills/github-loop-runner/references/github-operation-ledger.md`: GitHub write-operation state and branch/ref safety.
 - `skills/github-loop-runner/references/feedback-taxonomy.md`: feedback types, root-cause layers, allowed actions, and forbidden actions.
 - `skills/github-loop-runner/references/loop-trace.md`: loop trace event format and metrics.
@@ -43,4 +45,4 @@ Important files:
 - `skills/github-loop-runner/references/stopper-policy.md`: hard and soft stoppers.
 - `scripts/validate_skill.py`: stable v1 skill/manifest validator.
 
-Integrity rule: the runner must re-read `docs/progress.md` after each completed milestone, declare GitHub operation state before write actions, use CI for verification in GitHub-only mode, update loop trace and feedback log when evidence changes, gate process changes through the hypothesis log, and run the harness repair protocol when repeated runner defects appear.
+Integrity rule: the runner must re-read `docs/progress.md` after each completed milestone, declare GitHub operation state before write actions, use CI for verification in GitHub-only mode, run the Every-PR Coding Skill Gate, use controlled research intake only when due, update loop trace and feedback log when evidence changes, gate process changes through the hypothesis log, and run the harness repair protocol when repeated runner defects appear.
