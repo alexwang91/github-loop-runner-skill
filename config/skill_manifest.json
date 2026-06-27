@@ -15,6 +15,7 @@
       "long_run_growth",
       "feedback_trace",
       "loop_hypotheses",
+      "controlled_research_intake",
       "harness_repair"
     ],
     "non_goals": [
@@ -43,6 +44,12 @@
       "file": "skills/github-loop-runner/references/long-run-growth-loop.md",
       "required": true,
       "role": "planning"
+    },
+    {
+      "id": "research_intake",
+      "file": "skills/github-loop-runner/references/research-intake.md",
+      "required": true,
+      "role": "controlled_learning"
     },
     {
       "id": "feedback_taxonomy",
