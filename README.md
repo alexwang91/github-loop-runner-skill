@@ -33,6 +33,8 @@ It is not an agent OS, runtime DSL, CI interpreter, or general multi-agent orche
 | Prevent unsafe GitHub writes | GitHub Operation Ledger. |
 | Execute work | One milestone, one branch, one PR. |
 | Verify work | CI as VERIFY. |
+| Improve every PR | Every-PR Coding Skill Gate. |
+| Learn without drifting | Controlled Research Intake. |
 | Keep evidence | Feedback Log and Loop Trace. |
 | Continue useful long runs | Long-Run Growth Mode. |
 | Repair runner defects | Harness Repair Loop. |
@@ -58,7 +60,7 @@ cp -R skills/github-loop-runner ~/.codex/skills/
 Invoke it with a product idea:
 
 ```text
-Use $github-loop-runner to turn this product idea into a GitHub repo with runner docs, progress tracking, handoff decision, operation ledger, long-run growth policy, feedback log, loop trace, harness repair protocol, and milestone PR loops:
+Use $github-loop-runner to turn this product idea into a GitHub repo with runner docs, progress tracking, handoff decision, operation ledger, long-run growth policy, controlled research intake, feedback log, loop trace, harness repair protocol, and milestone PR loops:
 
 <PRODUCT_IDEA>
 ```
@@ -90,10 +92,13 @@ Handoff Decision
 Selected agent reads repo docs
         |
         v
-Read progress + declare operation state
+Read progress + declare operation state + run coding skill gate
         |
         v
 One branch -> one PR -> CI -> feedback + trace -> merge or block
+        |
+        v
+Research intake only when cadence or bounded architecture/domain decision requires it
         |
         v
 Re-read progress and continue only when safe
@@ -105,6 +110,7 @@ Re-read progress and continue only when safe
 read progress
   -> select first TODO
   -> declare GitHub operation state
+  -> run Every-PR Coding Skill Gate
   -> create one branch once
   -> fetch target files
   -> update/create target files
@@ -112,8 +118,21 @@ read progress
   -> observe CI
   -> merge or block
   -> update feedback, trace, and progress
+  -> run research intake only when due
   -> re-read state
 ```
+
+## Controlled Research Intake
+
+Stable v1 can use recent papers, high-quality GitHub repositories, official docs, and benchmark reports, but only through a bounded intake process.
+
+Research is allowed:
+
+- every 5 PRs,
+- before every 10-PR deep review,
+- when a new bounded domain or architecture decision needs current external evidence.
+
+Research is not allowed to interrupt an active ordinary PR. Findings must become notes, rejected ideas, or candidate backlog items with verification paths before implementation.
 
 ## Documentation
 
@@ -129,6 +148,7 @@ read progress
 | [Handoff Decision](skills/github-loop-runner/references/handoff-decision.md) | Bootstrap-to-development decision boundary. |
 | [GitHub Operation Ledger](skills/github-loop-runner/references/github-operation-ledger.md) | Write-operation state and branch/ref safety. |
 | [Long-Run Growth Loop](skills/github-loop-runner/references/long-run-growth-loop.md) | Backlog floor and review cadence. |
+| [Controlled Research Intake](skills/github-loop-runner/references/research-intake.md) | External research cadence and absorption rules. |
 | [Feedback taxonomy](skills/github-loop-runner/references/feedback-taxonomy.md) | Feedback classification. |
 | [Loop Trace](skills/github-loop-runner/references/loop-trace.md) | Evidence log protocol. |
 | [Harness Repair Loop](skills/github-loop-runner/references/harness-repair-loop.md) | Repair protocol for runner defects. |
@@ -161,14 +181,15 @@ This repository ships a minimal v1 validator and GitHub Actions workflow.
 | CI-only verification | Ready | Generated runners delegate verification to GitHub checks. |
 | Agent handoff | Ready | Bootstrap can stop and output a full prompt for another agent. |
 | Long-run growth | Ready | Generated runners periodically review and renew backlog. |
+| Controlled research intake | Ready | External ideas enter through cadence, absorption, and verification paths. |
 | Runtime DSL / agent OS | Not a goal | Explicitly out of scope for v1. |
 | Local-first execution | Not the default | CI remains the verification channel for GitHub-only loops. |
 
 ## When To Use / When To Skip
 
-Use it if you want a stable GitHub PR loop that another agent can safely continue.
+Use it if you want a stable GitHub PR loop that another agent can safely continue and periodically improve through controlled research intake.
 
-Skip it if you need a general runtime framework, local-first execution, or unconstrained multi-agent orchestration.
+Skip it if you need a general runtime framework, local-first execution, unconstrained multi-agent orchestration, or broad external research on every PR.
 
 ## Contributing
 
