@@ -40,6 +40,7 @@ def main() -> None:
     expected_core = {
         "github_operation_ledger",
         "long_run_growth",
+        "research_intake",
         "feedback_taxonomy",
         "loop_trace",
         "loop_hypotheses",
