@@ -1,6 +1,6 @@
 ---
 name: github-loop-runner
-description: Use when the user wants to bootstrap a GitHub repository with autonomous runner docs and tasks, stop for a handoff decision, produce a complete external-agent prompt, or continue a GitHub-only autonomous development loop with CI verification, docs/progress.md as state, GitHub Operation Ledger, Long-Run Growth Mode, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, harness-layer root cause classification, and milestone PRs through the GitHub connector instead of local clone or package-manager access.
+description: Use when the user wants to bootstrap a GitHub repository with autonomous runner docs and tasks, stop for a handoff decision, produce a complete external-agent prompt, or continue a GitHub-only autonomous development loop with CI verification, docs/progress.md as state, GitHub Operation Ledger, Long-Run Growth Mode, Controlled Research Intake, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, harness-layer root cause classification, and milestone PRs through the GitHub connector instead of local clone or package-manager access.
 ---
 
 # GitHub Loop Runner
@@ -9,7 +9,7 @@ description: Use when the user wants to bootstrap a GitHub repository with auton
 
 Turn a product idea or existing repository into a GitHub-only autonomous development handoff. The primary flow is: create or prepare the repository, write the plan and runner harness into it, open a bootstrap PR, then stop for a handoff decision. Product development starts only after the user chooses whether this same agent should continue or another agent should receive the complete runner prompt.
 
-When continuing development, the runner reads and writes through the GitHub connector, verifies through CI, uses `docs/progress.md` as the state source, declares GitHub operation state before write actions, records feedback and trace evidence, follows Long-Run Growth Mode for backlog expansion, repairs harness defects, gates process changes through hypotheses, then repeats.
+When continuing development, the runner reads and writes through the GitHub connector, verifies through CI, uses `docs/progress.md` as the state source, declares GitHub operation state before write actions, records feedback and trace evidence, follows Long-Run Growth Mode for backlog expansion, applies the Every-PR Coding Skill Gate, uses Controlled Research Intake only at review cadence or when a bounded architecture/domain decision requires it, repairs harness defects, gates process changes through hypotheses, then repeats.
 
 Load these references when bootstrapping or running:
 
@@ -19,6 +19,7 @@ Load these references when bootstrapping or running:
 - `references/github-operation-ledger.md`
 - `references/long-run-growth-loop.md`
 - `references/long-run-planning-addendum.md`
+- `references/research-intake.md`
 - `references/feedback-taxonomy.md`
 - `references/loop-trace.md`
 - `references/review-and-renewal-loop.md`
@@ -42,6 +43,7 @@ Do not require local `git clone`, package managers, or local test commands for t
 | `mattpocock/skills` | Alignment before building, shared project language, ADRs, and vertical-slice milestones. |
 | `obra/superpowers` | Brainstorming, writing-plans, TDD/eval-first, review, and finishing-branch discipline. |
 | `multica-ai/andrej-karpathy-skills` | Think before coding, simplicity first, surgical changes, and explicit success criteria. |
+| Controlled external research | Review-cadence notes, candidate milestones, rejection reasons, and verification paths. |
 
 ## Optional Skill Invocation Map
 
@@ -52,7 +54,7 @@ Do not require local `git clone`, package managers, or local test commands for t
 | Brainstorm tradeoffs | `$brainstorming` or `/brainstorming` | Explore options before committing to the implementation shape. |
 | Write implementation plan | `$writing-plans` or `/writing-plans` | Write concrete steps with verification for each milestone. |
 | Behavior changes | `$test-driven-development` or `/test-driven-development` | Define the failing test, eval, or CI assertion before implementation. |
-| Review PR work | `$requesting-code-review` or `/requesting-code-review` | Review diff against plan, acceptance criteria, trace evidence, and guardrails. |
+| Review PR work | `$requesting-code-review` or `/requesting-code-review` | Review diff against plan, acceptance criteria, trace evidence, research absorption records, and guardrails. |
 | Finish branch | `$finishing-a-development-branch` or `/finishing-a-development-branch` | Merge only after CI is green, progress and loop trace are updated, and no blocker remains. |
 
 ## Bootstrap Workflow
@@ -60,12 +62,12 @@ Do not require local `git clone`, package managers, or local test commands for t
 1. Resolve the target repository, base branch, and product goal.
 2. Run the Capability Probe.
 3. Read all reference files listed above.
-4. Generate `AGENTS.md`, runner docs, progress, plan, development principles, GitHub Operation Ledger, feedback taxonomy/log, Loop Trace, Handoff Decision, Long-Run Growth Loop, Review and Renewal Loop, Harness Repair Loop, loop hypotheses, stopper policy, loop review, PR template, and CI scaffold.
+4. Generate `AGENTS.md`, runner docs, progress, plan, development principles, GitHub Operation Ledger, feedback taxonomy/log, Loop Trace, Handoff Decision, Long-Run Growth Loop, Controlled Research Intake, Review and Renewal Loop, Harness Repair Loop, loop hypotheses, stopper policy, loop review, PR template, and CI scaffold.
 5. Open one bootstrap PR through the GitHub connector.
 6. Let CI verify. Docs-only CI is acceptable only for bootstrap; the first product milestone must add stack-specific checks.
 7. Stop at the Handoff Decision. Report the repository, bootstrap branch/PR, generated files, CI status, and first TODO milestone from fresh `docs/progress.md`.
 8. Ask the user whether this same agent should continue development or whether the work should be handed to another agent.
-9. If the user chooses external-agent development, fill `references/runner-prompt.md`, include `references/long-run-planning-addendum.md` when Long-Run Growth Mode is enabled, and return the complete copy-paste prompt. Do not start product milestone work in this session.
+9. If the user chooses external-agent development, fill `references/runner-prompt.md`, include `references/long-run-planning-addendum.md` when Long-Run Growth Mode is enabled, include `references/research-intake.md` when controlled external research is enabled, and return the complete copy-paste prompt. Do not start product milestone work in this session.
 10. If the user explicitly chooses current-agent development, enter the Loop Workflow.
 
 ## Handoff Decision
@@ -78,41 +80,49 @@ Ask:
 Do you want this agent to continue development, or should I hand this to another agent?
 ```
 
-Default to external-agent handoff when the user's original intent was to create a repository and tasks for another agent. External-agent handoff must output a full prompt, not a short instruction. The prompt must include repository, base branch, files to read, progress selection rule, CI-as-VERIFY rule, GitHub Operation Ledger, Long-Run Growth Mode, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, stopper rules, and hard guardrails.
+Default to external-agent handoff when the user's original intent was to create a repository and tasks for another agent. External-agent handoff must output a full prompt, not a short instruction. The prompt must include repository, base branch, files to read, progress selection rule, CI-as-VERIFY rule, GitHub Operation Ledger, Long-Run Growth Mode, Controlled Research Intake, Feedback Taxonomy, Loop Trace, Harness Repair Loop, Hypothesis-Gated Renewal, stopper rules, and hard guardrails.
 
 ## Loop Workflow
 
 Only enter this workflow after the user explicitly chooses current-agent development or asks to continue development in an already bootstrapped repository.
 
-1. Fetch `docs/autonomous-runner.md`, `docs/progress.md`, `docs/github-operation-ledger.md`, `docs/long-run-growth-loop.md`, `docs/feedback-taxonomy.md`, `docs/feedback-log.md`, `docs/loop-trace.md`, `docs/review-and-renewal-loop.md`, `docs/harness-repair-loop.md`, `docs/loop-hypotheses.md`, and `docs/stopper-policy.md`.
-2. Decide whether Long-Run Growth Review, review, repair, or hypothesis validation is due before selecting implementation work.
+1. Fetch `docs/autonomous-runner.md`, `docs/progress.md`, `docs/github-operation-ledger.md`, `docs/long-run-growth-loop.md`, `docs/research-intake.md`, `docs/feedback-taxonomy.md`, `docs/feedback-log.md`, `docs/loop-trace.md`, `docs/review-and-renewal-loop.md`, `docs/harness-repair-loop.md`, `docs/loop-hypotheses.md`, and `docs/stopper-policy.md`.
+2. Decide whether Long-Run Growth Review, Controlled Research Intake, review, repair, or hypothesis validation is due before selecting implementation work.
 3. Run Long-Run Growth Mode when PR intervals are reached, the TODO backlog is below floor, or no TODO remains before the configured minimum PR budget.
-4. Run the Review and Renewal Loop when no TODO remains after growth review, the review interval is reached, CI or feedback repeats, trace evidence is missing, a hypothesis needs a decision, or the user asks.
-5. Run the Harness Repair Loop when repeated `trace_gap`, `protocol_violation`, `weak_verification`, `harness_defect`, missing PR evidence, inconsistent state, or repeated unsafe GitHub operation state appears.
-6. Apply Stop Conditions. Before the long-run minimum PR budget is reached, no TODO remaining should trigger Long-Run Growth Review rather than final stopping unless a hard safety stopper applies.
-7. Re-fetch `docs/progress.md`, select the first `TODO`, and skip `DONE`, `BLOCKED`, `DEFERRED`, and `CANCELLED`.
-8. Declare GitHub Operation Ledger state before write actions.
-9. Append a Loop Trace event for milestone selection, operation state, branch creation, PR open, CI observation, feedback classification, merge attempt, progress update, growth review, review, repair, hypothesis lifecycle event, and stop.
-10. Create one branch and one PR for the milestone.
-11. Use CI as VERIFY. For every meaningful observation, classify feedback with root-cause layer, allowed next actions, and forbidden next actions.
-12. Merge only after CI is green, PR evidence is complete, feedback blockers are resolved, active hypotheses are updated, operation state is safe, and progress plus loop trace are current.
-13. Re-read `docs/progress.md` before the next milestone.
+4. Run Controlled Research Intake only at configured cadence, before deep review, or when a new bounded domain or architecture decision requires current external information.
+5. Run the Review and Renewal Loop when no TODO remains after growth review, the review interval is reached, CI or feedback repeats, trace evidence is missing, a hypothesis needs a decision, research intake creates candidate backlog items, or the user asks.
+6. Run the Harness Repair Loop when repeated `trace_gap`, `protocol_violation`, `weak_verification`, `harness_defect`, missing PR evidence, inconsistent state, or repeated unsafe GitHub operation state appears.
+7. Apply Stop Conditions. Before the long-run minimum PR budget is reached, no TODO remaining should trigger Long-Run Growth Review rather than final stopping unless a hard safety stopper applies.
+8. Re-fetch `docs/progress.md`, select the first `TODO`, and skip `DONE`, `BLOCKED`, `DEFERRED`, and `CANCELLED`.
+9. Apply the Every-PR Coding Skill Gate: clarify goal, define acceptance criteria, keep a vertical slice, write an implementation plan, verify first when behavior changes, keep the diff minimal, review before merge, and update progress.
+10. Declare GitHub Operation Ledger state before write actions.
+11. Append a Loop Trace event for milestone selection, operation state, coding skill gate, branch creation, PR open, CI observation, feedback classification, merge attempt, progress update, research intake, growth review, review, repair, hypothesis lifecycle event, and stop.
+12. Create one branch and one PR for the milestone.
+13. Use CI as VERIFY. For every meaningful observation, classify feedback with root-cause layer, allowed next actions, and forbidden next actions.
+14. Merge only after CI is green, PR evidence is complete, feedback blockers are resolved, active hypotheses are updated, operation state is safe, and progress plus loop trace are current.
+15. Re-read `docs/progress.md` before the next milestone.
 
 ## Long-Run Growth Mode
 
 Long-Run Growth Mode is defined in `references/long-run-growth-loop.md`. It sets a long-run PR budget, review intervals, deep-review intervals, backlog floor, expansion batch size, and final stop criteria. It prevents the runner from treating a short initial plan as the whole project.
 
+## Controlled Research Intake
+
+Controlled Research Intake is defined in `references/research-intake.md`. Ordinary PRs run the coding skill gate and stay scoped to the selected milestone. External papers, high-quality GitHub repositories, official docs, and benchmark reports are consulted on cadence: every 5 PRs, before every 10-PR deep review, or for a bounded new domain or architecture decision.
+
+Research findings must become notes, candidate ideas, rejection reasons, or accepted backlog items with verification paths. They must not directly interrupt an active milestone PR or expand stable v1 into schedulers, MCP registries, local worktree managers, databases, or sub-agent runtimes.
+
 ## Feedback Taxonomy
 
-Feedback Taxonomy controls the runner's next actions. Record source, type, severity, evidence, root cause, harness-layer root cause classification, allowed next actions, forbidden next actions, and runner decision. Classify CI, review, mergeability, progress state, trace gaps, harness defects, hypothesis outcomes, growth reviews, review-loop decisions, handoff decisions, and stopper decisions.
+Feedback Taxonomy controls the runner's next actions. Record source, type, severity, evidence, root cause, harness-layer root cause classification, allowed next actions, forbidden next actions, and runner decision. Classify CI, review, mergeability, progress state, trace gaps, harness defects, hypothesis outcomes, research absorption outcomes, growth reviews, review-loop decisions, handoff decisions, and stopper decisions.
 
 ## Loop Trace
 
-Loop Trace records observable runner events in `docs/loop-trace.md`. Required events include milestone selection, branch creation, PR open, CI observation, feedback classification, merge attempt, progress update, growth review, review, harness repair, hypothesis lifecycle changes, handoff decisions, and stop. Missing material trace evidence becomes `trace_gap` feedback.
+Loop Trace records observable runner events in `docs/loop-trace.md`. Required events include milestone selection, operation state, coding skill gate, branch creation, PR open, CI observation, feedback classification, merge attempt, progress update, research intake, growth review, review, harness repair, hypothesis lifecycle changes, handoff decisions, and stop. Missing material trace evidence becomes `trace_gap` feedback.
 
 ## Review and Renewal Loop
 
-Review completed milestones, feedback trends, trace coverage, product-goal fit, verification strength, active hypotheses, backlog floor, blockers, and stopper status. Add only specific, useful, non-duplicative, verifiable milestones. Do not add vague cleanup, polish, placeholders, or churn-only work.
+Review completed milestones, feedback trends, trace coverage, product-goal fit, verification strength, research absorption records, active hypotheses, backlog floor, blockers, and stopper status. Add only specific, useful, non-duplicative, verifiable milestones. Do not add vague cleanup, polish, placeholders, or churn-only work.
 
 ## Harness Repair Loop
 
@@ -130,6 +140,8 @@ Hypothesis-Gated Renewal prevents permanent process changes without evidence. Re
 - Keep code simple.
 - Make surgical changes.
 - Treat CI/evals as specifications.
+- Run the Every-PR Coding Skill Gate.
+- Use Controlled Research Intake only at cadence or for bounded domain/architecture decisions.
 - Declare GitHub operation state before write actions.
 - Classify feedback before reacting.
 - Keep trace evidence current.
@@ -147,6 +159,7 @@ Stop and report instead of forcing progress when:
 - CI exists but required PR or trace evidence is missing and cannot be repaired safely.
 - GitHub operation state is missing, inconsistent, or shows repeated branch/ref preparation.
 - The next step requires access or approval outside the current plan.
+- External research suggests a broad architecture change that lacks a bounded verification path.
 - CI remains red after configured fix attempts and the root cause is outside scope.
 - Repeated harness defects cannot be safely repaired.
 - An active hypothesis is invalidated and no rollback path exists.
@@ -160,8 +173,8 @@ When stopping after bootstrap or after a safe-to-continue review, run the Handof
 
 For bootstrap work, report repository, branch/PR, files seeded, CI status, first TODO milestone, and the Handoff Decision question. If the user chooses external-agent development, return the filled external-agent prompt.
 
-For loop work, report selected milestone, operation state, PR count, backlog count, feedback classifications and root-cause layers, growth/review/repair status, trace events, hypothesis changes, PR status, CI result, progress update, and next state after re-reading progress.
+For loop work, report selected milestone, operation state, PR count, backlog count, coding skill gate status, research intake status if due, feedback classifications and root-cause layers, growth/review/repair status, trace events, hypothesis changes, PR status, CI result, progress update, and next state after re-reading progress.
 
-For review-only work, report trigger, completed work, PR count, backlog count, feedback trends, trace coverage, gaps, hypotheses, harness repairs, plan updates, stopper decision, and whether a Handoff Decision is needed.
+For review-only work, report trigger, completed work, PR count, backlog count, research absorption records, feedback trends, trace coverage, gaps, hypotheses, harness repairs, plan updates, stopper decision, and whether a Handoff Decision is needed.
 
-For prompt-only work, read `references/runner-prompt.md`, fill placeholders, include `references/long-run-planning-addendum.md` when Long-Run Growth Mode is enabled, and return the prompt directly.
+For prompt-only work, read `references/runner-prompt.md`, fill placeholders, include `references/long-run-planning-addendum.md` when Long-Run Growth Mode is enabled, include `references/research-intake.md` when controlled external research is enabled, and return the prompt directly.
