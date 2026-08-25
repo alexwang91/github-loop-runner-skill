@@ -31,10 +31,14 @@ jobs:
             echo "::add-mask::$url"
             body=$(mktemp)
             code=$(curl --silent --show-error --output "$body" --write-out '%{http_code}' "$url")
-            cat "$body"
-            echo
+            response=$(cat "$body")
+            printf '%s\n' "$response"
             rm -f "$body"
             if [[ "$code" =~ ^2 ]]; then
+              continue
+            fi
+            if [[ "$code" == '403' && "$response" == *'already used'* ]]; then
+              echo 'signed URL already consumed; verifying resulting record below'
               continue
             fi
             if [[ "$url" == *'/kv/room-owners/'* && "$code" == '409' ]]; then
